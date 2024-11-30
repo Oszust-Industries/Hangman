@@ -1,4 +1,4 @@
-# Hangman
+# Hangman v1.4.2
 
 Play through forty different Hangman rounds with four unique categories. Guess letters until you solve the entire word. If you already know the word, you can solve it early. Three distinct game difficulties provide a challenge for every player. 
 

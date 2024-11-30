@@ -1,0 +1,14 @@
+{
+  "Animals": {
+    "Dog": "Man's best friend",
+    "Horse": "Racing Animal",
+    "Cow": "Animal to milk",
+    "Giraffe": "Long-necked animal",
+    "Tiger": "Large wild cat",
+    "Sheep": "Woolly animal",
+    "Zebra": "Striped animal",
+    "Rabbit": "Long-eared animal",
+    "Shark": "Predatory fish",
+    "Reindeer": "Arctic animal"
+  }
+}

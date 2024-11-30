@@ -2,7 +2,7 @@
 
 Play through forty different Hangman rounds with four unique categories. Guess letters until you solve the entire word. If you already know the word, you can solve it early. Three distinct game difficulties provide a challenge for every player. 
 
-Release Date: May 10, 2021
+Release Date: Not Released
 
 Developer: [Oszust Industries](https://github.com/Oszust-Industries)
 <br /> [![Twitter URL](https://img.shields.io/twitter/url/https/twitter.com/bukotsunikki.svg?style=social&label=Follow%20%40OszustOS)](https://twitter.com/OszustOS)
@@ -14,9 +14,6 @@ Languages: English
 25 Available Achievements
 
 <br /> This game reads and writes game saves on your computer.
-
-This game uses [Achievement-Notifications-Library](https://github.com/Oszust-Industries/Achievement-Notifications-Library) v1.4.5
-<br /> (*Windows 10 Toast must be installed for achievement notifications*)
 
 ## Content For This Game:
 
@@ -30,9 +27,6 @@ This game uses [Achievement-Notifications-Library](https://github.com/Oszust-Ind
 
 ## Installation:
 
-1. Download the entire .zip file and move to the desired location.
-2. Unzip the file and create a shortcut to the .py file.
-4. Opening the shortcut will start the game.
 
 ## DLC List:
 
@@ -81,3 +75,9 @@ Developer: [Oszust Industries](https://github.com/Oszust-Industries)
 Hangman: Basketball Teams category price - Free
 
 This category introduces thirty new rounds. Each round is one of the NBA teams.
+
+<br />
+<br />
+
+# Old Hangman (Unsupported)
+[Hangman v1](https://github.com/Oszust-Industries/Hangman/tree/v1)

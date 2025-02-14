@@ -9,7 +9,7 @@ Developer: [Oszust Industries](https://github.com/Oszust-Industries)
 
 Languages: English
 
-25 Available Achievements
+28 Achievements
 
 ## Requirements:
 

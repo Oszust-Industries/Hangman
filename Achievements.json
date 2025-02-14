@@ -126,7 +126,7 @@
             "Description": "Go on a streak of 5 correct games.",
             "Level": "Silver",
             "Rarity": "Common",
-            "AchievementProgressTracker": 11,
+            "AchievementProgressTracker": 5,
             "DLC": "Base",
             "Hidden": false
         }
@@ -137,7 +137,7 @@
             "Description": "Go on a streak of 5 wrong games.",
             "Level": "Silver",
             "Rarity": "Rare",
-            "AchievementProgressTracker": 13,
+            "AchievementProgressTracker": 5,
             "DLC": "Base",
             "Hidden": false
         }
@@ -192,7 +192,7 @@
             "Description": "Complete all the game words in the animals category.",
             "Level": "Gold",
             "Rarity": "Rare",
-            "AchievementProgressTracker": 1,
+            "AchievementProgressTracker": 10,
             "DLC": "Animals",
             "Hidden": false
         }
@@ -203,7 +203,7 @@
             "Description": "Complete all the game words in the movies category.",
             "Level": "Gold",
             "Rarity": "Rare",
-            "AchievementProgressTracker": 3,
+            "AchievementProgressTracker": 10,
             "DLC": "Movies",
             "Hidden": false
         }
@@ -214,7 +214,7 @@
             "Description": "Complete all the game words in the US cities category.",
             "Level": "Gold",
             "Rarity": "Rare",
-            "AchievementProgressTracker": 5,
+            "AchievementProgressTracker": 10,
             "DLC": "US Cities",
             "Hidden": false
         }
@@ -225,7 +225,7 @@
             "Description": "Complete all the game words in the foods category.",
             "Level": "Gold",
             "Rarity": "Rare",
-            "AchievementProgressTracker": 7,
+            "AchievementProgressTracker": 10,
             "DLC": "Foods",
             "Hidden": false
         }
@@ -236,7 +236,7 @@
             "Description": "Complete all the game words in the hockey teams category.",
             "Level": "Gold",
             "Rarity": "Rare",
-            "AchievementProgressTracker": 9,
+            "AchievementProgressTracker": 32,
             "DLC": "Hockey Teams",
             "Hidden": false
         }
@@ -247,7 +247,7 @@
             "Description": "Complete all the game words in the Big Ten Colleges category.",
             "Level": "Gold",
             "Rarity": "Rare",
-            "AchievementProgressTracker": 15,
+            "AchievementProgressTracker": 14,
             "DLC": "Big Ten Colleges",
             "Hidden": false
         }
@@ -258,7 +258,7 @@
             "Description": "Complete all the game words in the baseball teams category.",
             "Level": "Gold",
             "Rarity": "Rare",
-            "AchievementProgressTracker": 17,
+            "AchievementProgressTracker": 30,
             "DLC": "Baseball Teams",
             "Hidden": false
         }
@@ -269,7 +269,7 @@
             "Description": "Complete all the game words in the basketball teams category.",
             "Level": "Gold",
             "Rarity": "Rare",
-            "AchievementProgressTracker": 19,
+            "AchievementProgressTracker": 30,
             "DLC": "Basketball Teams",
             "Hidden": false
         }

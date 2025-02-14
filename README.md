@@ -1,13 +1,11 @@
 # Hangman
 
-Play through forty different Hangman rounds with four unique categories. Guess letters until you solve the entire word. If you already know the word, you can solve it early. Three distinct game difficulties provide a challenge for every player. 
+Enjoy hundreds of Hangman rounds with a variety of unique categories! Test your skills across different difficulty levels, unlock achievements, and use optional hints when you need a helping hand. Can you guess the word before you run out of chances?
 
 Release Date: Not Released
 
 Developer: [Oszust Industries](https://github.com/Oszust-Industries)
 <br /> [![Twitter URL](https://img.shields.io/twitter/url/https/twitter.com/bukotsunikki.svg?style=social&label=Follow%20%40OszustOS)](https://twitter.com/OszustOS)
-
-<br /> Hangman price - Free 
 
 Languages: English
 
@@ -25,18 +23,16 @@ Languages: English
 
 [Hangman: Basketball Teams category](https://github.com/Oszust-Industries/Hangman#hangman-basketball-teams-category) - Free
 
-## Installation:
+#### Supported Devices:
 
+* **Storage**: 500 MB
+* **Operating Systems**: Windows 10 & 11 and MacOS
 
 ## DLC List:
 
 ### Hangman: Hockey Teams category
 
 Release Date: June 15, 2021
-
-Developer: [Oszust Industries](https://github.com/Oszust-Industries)
-
-Hangman: Hockey Teams category price - Free
 
 This category introduces thirty-two new rounds. Each round is one of the NHL teams.
 <br />
@@ -46,10 +42,6 @@ This category introduces thirty-two new rounds. Each round is one of the NHL tea
 
 Release Date: September 8, 2021
 
-Developer: [Oszust Industries](https://github.com/Oszust-Industries)
-
-Hangman: Big Ten Colleges category price - Free
-
 This category introduces fourteen new rounds. Each round is one of the Big Ten Colleges.
 <br />
 <br />
@@ -57,10 +49,6 @@ This category introduces fourteen new rounds. Each round is one of the Big Ten C
 ### Hangman: Baseball Teams category
 
 Release Date: September 22, 2021
-
-Developer: [Oszust Industries](https://github.com/Oszust-Industries)
-
-Hangman: Baseball Teams category price - Free
 
 This category introduces thirty new rounds. Each round is one of the MLB teams.
 <br />
@@ -70,14 +58,4 @@ This category introduces thirty new rounds. Each round is one of the MLB teams.
 
 Release Date: October 1, 2021
 
-Developer: [Oszust Industries](https://github.com/Oszust-Industries)
-
-Hangman: Basketball Teams category price - Free
-
 This category introduces thirty new rounds. Each round is one of the NBA teams.
-
-<br />
-<br />
-
-# Old Hangman (Unsupported)
-[Hangman v1](https://github.com/Oszust-Industries/Hangman/tree/v1)

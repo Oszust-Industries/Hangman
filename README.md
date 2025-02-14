@@ -11,25 +11,52 @@ Languages: English
 
 25 Available Achievements
 
-<br /> This game reads and writes game saves on your computer.
-
-## Content For This Game:
-
-[Hangman: Hockey Teams category](https://github.com/Oszust-Industries/Hangman#hangman-hockey-teams-category) - Free
-
-[Hangman: Big Ten Colleges category](https://github.com/Oszust-Industries/Hangman#hangman-big-ten-colleges-category) - Free
-
-[Hangman: Baseball Teams category](https://github.com/Oszust-Industries/Hangman#hangman-baseball-teams-category) - Free
-
-[Hangman: Basketball Teams category](https://github.com/Oszust-Industries/Hangman#hangman-basketball-teams-category) - Free
+## Requirements:
 
 #### Supported Devices:
 
 * **Storage**: 500 MB
-* **Operating Systems**: Windows 10 & 11 and MacOS
+* **Operating Systems**: Windows 10 & 11
 
-## DLC List:
+## Additional Information:
 
+#### Permissions: 
+* Read/write access to files on your device
+
+## Category List:
+
+### Hangman: Cities category
+
+Release Date: May 10, 2021
+
+This category introduces fifty-one new rounds. Each round features a major U.S. city from all states plus Washington, D.C.
+<br />
+<br />
+<br />
+### Hangman: Movies category
+
+Release Date: May 10, 2021
+
+This category introduces one hundred new rounds. Each round features the title of a popular movie.
+<br />
+<br />
+<br />
+### Hangman: Food category
+
+Release Date: May 10, 2021
+
+This category introduces thirty new rounds. Each round features the name of a popular food item.
+<br />
+<br />
+<br />
+### Hangman: Animals category
+
+Release Date: May 10, 2021
+
+This category introduces thirty new rounds. Each round features the name of a different animal.
+<br />
+<br />
+<br />
 ### Hangman: Hockey Teams category
 
 Release Date: June 15, 2021
@@ -59,3 +86,24 @@ This category introduces thirty new rounds. Each round is one of the MLB teams.
 Release Date: October 1, 2021
 
 This category introduces thirty new rounds. Each round is one of the NBA teams.
+<br />
+<br />
+<br />
+### Hangman: US Football Teams category
+Release Date: TBA
+
+This category introduces thirty-two new rounds. Each round is one of the NFL teams.
+<br />
+<br />
+<br />
+### Hangman: Transport category
+Release Date: TBA
+
+This category introduces twenty-eight new rounds. Each round features a mode of transportation.
+<br />
+<br />
+<br />
+### Hangman: Holidays category
+Release Date: TBA
+
+This category introduces twenty-eight new rounds. Each round features a well-known holiday.

@@ -25,15 +25,15 @@ Languages: English
 
 ## Category List:
 
-### Hangman: Cities category
+### Cities
 
 Release Date: May 10, 2021
 
-This category introduces fifty-one new rounds. Each round features a major U.S. city from all states plus Washington, D.C.
+This category introduces fifty-one new rounds. Each round features a major U.S. city from all states and Washington, D.C. as well.
 <br />
 <br />
 <br />
-### Hangman: Movies category
+### Movies
 
 Release Date: May 10, 2021
 
@@ -41,7 +41,7 @@ This category introduces one hundred new rounds. Each round features the title o
 <br />
 <br />
 <br />
-### Hangman: Food category
+### Food
 
 Release Date: May 10, 2021
 
@@ -49,7 +49,7 @@ This category introduces thirty new rounds. Each round features the name of a po
 <br />
 <br />
 <br />
-### Hangman: Animals category
+### Animals
 
 Release Date: May 10, 2021
 
@@ -57,7 +57,7 @@ This category introduces thirty new rounds. Each round features the name of a di
 <br />
 <br />
 <br />
-### Hangman: Hockey Teams category
+### NHL Hockey Teams
 
 Release Date: June 15, 2021
 
@@ -65,7 +65,7 @@ This category introduces thirty-two new rounds. Each round is one of the NHL tea
 <br />
 <br />
 <br />
-### Hangman: Big Ten Colleges category
+### Big Ten Colleges
 
 Release Date: September 8, 2021
 
@@ -73,7 +73,7 @@ This category introduces fourteen new rounds. Each round is one of the Big Ten C
 <br />
 <br />
 <br />
-### Hangman: Baseball Teams category
+### MLB Baseball Teams
 
 Release Date: September 22, 2021
 
@@ -81,7 +81,7 @@ This category introduces thirty new rounds. Each round is one of the MLB teams.
 <br />
 <br />
 <br />
-### Hangman: Basketball Teams category
+### NBA Basketball Teams
 
 Release Date: October 1, 2021
 
@@ -89,14 +89,14 @@ This category introduces thirty new rounds. Each round is one of the NBA teams.
 <br />
 <br />
 <br />
-### Hangman: US Football Teams category
+### NFL Football Teams
 Release Date: TBA
 
 This category introduces thirty-two new rounds. Each round is one of the NFL teams.
 <br />
 <br />
 <br />
-### Hangman: Transport category
+### Transportation
 Release Date: TBA
 
 This category introduces twenty-eight new rounds. Each round features a mode of transportation.

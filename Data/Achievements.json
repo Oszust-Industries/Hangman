@@ -1,0 +1,288 @@
+{
+    "Achievement_100%_Achievement": [
+        {
+            "Name": "Hangman Master",
+            "Description": "PlatinumTrophy",
+            "Level": "Platinum",
+            "AchievementProgressTracker": null,
+            "DLC": "Base",
+            "Hidden": false
+        }
+    ],
+    "Achievement_Welcome": [
+        {
+            "Name": "Welcome to the Game",
+            "Description": "Start Hangman for the first time.",
+            "Level": "Bronze",
+            "AchievementProgressTracker": null,
+            "DLC": "Base",
+            "Hidden": false
+        }
+    ],
+    "Achievement_Keep_Playing": [
+        {
+            "Name": "Thirsty for More?",
+            "Description": "Start a second game.",
+            "Level": "Bronze",
+            "AchievementProgressTracker": null,
+            "DLC": "Base",
+            "Hidden": false
+        }
+    ],
+    "Achievement_Stop_Playing": [
+        {
+            "Name": "Done so Soon?",
+            "Description": "Stop playing Hangman.",
+            "Level": "Bronze",
+            "Rarity": "Common",
+            "AchievementProgressTracker": null,
+            "DLC": "Base",
+            "Hidden": true
+        }
+    ],
+    "Achievement_Solve_Wrong": [
+        {
+            "Name": "Swing and a Miss",
+            "Description": "Wrongly solve an entire word.",
+            "Level": "Bronze",
+            "Rarity": "Common",
+            "AchievementProgressTracker": null,
+            "DLC": "Base",
+            "Hidden": false
+        }
+    ],
+    "Achievement_Winner": [
+        {
+            "Name": "We are the Champions",
+            "Description": "Win a game of Hangman.",
+            "Level": "Bronze",
+            "AchievementProgressTracker": null,
+            "DLC": "Base",
+            "Hidden": false
+        }
+    ],
+    "Achievement_Same_Letter": [
+        {
+            "Name": "Hello? Hello? Anybody home?",
+            "Description": "Try the same letter more than once.",
+            "Level": "Bronze",
+            "AchievementProgressTracker": null,
+            "DLC": "Base",
+            "Hidden": true
+        }
+    ],
+    "Achievement_Alphabet": [
+        {
+            "Name": "00110001",
+            "Description": "Type a character that isn't from the alphabet.",
+            "Level": "Bronze",
+            "AchievementProgressTracker": null,
+            "DLC": "Base",
+            "Hidden": true
+        }
+    ],
+    "Achievement_Solve_Correct": [
+        {
+            "Name": "Walking Dictionary",
+            "Description": "Correctly solve an entire word.",
+            "Level": "Silver",
+            "AchievementProgressTracker": null,
+            "DLC": "Base",
+            "Hidden": false
+        }
+    ],
+    "Achievement_Terminate": [
+        {
+            "Name": "Hasta La Vista, Baby",
+            "Description": "Terminate a game while playing.",
+            "Level": "Silver",
+            "AchievementProgressTracker": null,
+            "DLC": "Base",
+            "Hidden": true
+        }
+    ],
+    "Achievement_Close_Call": [
+        {
+            "Name": "Winning's Winning",
+            "Description": "Win a game with only one life left.",
+            "Level": "Silver",
+            "AchievementProgressTracker": null,
+            "DLC": "Base",
+            "Hidden": true
+        }
+    ],
+    "Achievement_Hot_Streak": [
+        {
+            "Name": "You're on Fire!",
+            "Description": "Go on a streak of 5 correct games.",
+            "Level": "Silver",
+            "Rarity": "Common",
+            "AchievementProgressTracker": 5,
+            "DLC": "Base",
+            "Hidden": false
+        }
+    ],
+    "Achievement_Cold_Streak": [
+        {
+            "Name": "Geez, Pick up a Book",
+            "Description": "Go on a streak of 5 wrong games.",
+            "Level": "Silver",
+            "AchievementProgressTracker": 5,
+            "DLC": "Base",
+            "Hidden": false
+        }
+    ],
+    "Achievement_All_Topics": [
+        {
+            "Name": "100% Completion",
+            "Description": "Play all the game topics.",
+            "Level": "Silver",
+            "AchievementProgressTracker": null,
+            "DLC": "Base",
+            "Hidden": false
+        }
+    ],
+    "Achievement_Solve_Correct_No_Help": [
+        {
+            "Name": "How did you Know?",
+            "Description": "Correctly solve an entire word without using any letter guesses.",
+            "Level": "Gold",
+            "Rarity": "Rare",
+            "AchievementProgressTracker": null,
+            "DLC": "Base",
+            "Hidden": false
+        }
+    ],
+    "Achievement_Hard_Mode": [
+        {
+            "Name": "Challenge Accepted",
+            "Description": "Win a game of Hangman without hints activated.",
+            "Level": "Gold",
+            "Rarity": "Rare",
+            "AchievementProgressTracker": null,
+            "DLC": "Base",
+            "Hidden": false
+        }
+    ],
+    "Achievement_All_Correct": [
+        {
+            "Name": "A+ Score",
+            "Description": "Get every question in Hangman correct.",
+            "Level": "Gold",
+            "AchievementProgressTracker": null,
+            "DLC": "Base",
+            "Hidden": false
+        }
+    ],
+    "Achievement_All_Animals": [
+        {
+            "Name": "Zoologist",
+            "Description": "Complete all the game words in the animals category.",
+            "Level": "Gold",
+            "AchievementProgressTracker": 30,
+            "DLC": "Animals",
+            "Hidden": false
+        }
+    ],
+    "Achievement_All_Movies": [
+        {
+            "Name": "Cinephile",
+            "Description": "Complete all the game words in the movies category.",
+            "Level": "Gold",
+            "AchievementProgressTracker": 100,
+            "DLC": "Movies",
+            "Hidden": false
+        }
+    ],
+    "Achievement_All_Cities": [
+        {
+            "Name": "Architect",
+            "Description": "Complete all the game words in the US cities category.",
+            "Level": "Gold",
+            "AchievementProgressTracker": 51,
+            "DLC": "US Cities",
+            "Hidden": false
+        }
+    ],
+    "Achievement_All_Foods": [
+        {
+            "Name": "Gastronome",
+            "Description": "Complete all the game words in the foods category.",
+            "Level": "Gold",
+            "AchievementProgressTracker": 30,
+            "DLC": "Foods",
+            "Hidden": false
+        }
+    ],
+    "Achievement_All_Hockey": [
+        {
+            "Name": "Mr. Hockey",
+            "Description": "Complete all the game words in the hockey teams category.",
+            "Level": "Gold",
+            "Rarity": "Rare",
+            "AchievementProgressTracker": 32,
+            "DLC": "Hockey Teams",
+            "Hidden": false
+        }
+    ],
+    "Achievement_All_Big_Ten_Colleges": [
+        {
+            "Name": "Stagg Championship Trophy",
+            "Description": "Complete all the game words in the Big Ten Colleges category.",
+            "Level": "Gold",
+            "AchievementProgressTracker": 14,
+            "DLC": "Big Ten Colleges",
+            "Hidden": false
+        }
+    ],
+    "Achievement_All_Baseball": [
+        {
+            "Name": "Play Ball",
+            "Description": "Complete all the game words in the baseball teams category.",
+            "Level": "Gold",
+            "AchievementProgressTracker": 30,
+            "DLC": "Baseball Teams",
+            "Hidden": false
+        }
+    ],
+    "Achievement_All_Basketball": [
+        {
+            "Name": "Swish",
+            "Description": "Complete all the game words in the basketball teams category.",
+            "Level": "Gold",
+            "AchievementProgressTracker": 30,
+            "DLC": "Basketball Teams",
+            "Hidden": false
+        }
+    ],
+    "Achievement_All_Football": [
+        {
+            "Name": "Pig Skin",
+            "Description": "Complete all the game words in the US football teams category.",
+            "Level": "Gold",
+            "AchievementProgressTracker": 32,
+            "DLC": "Football Teams",
+            "Hidden": false
+        }
+    ],
+    "Achievement_All_Holidays": [
+        {
+            "Name": "Ho Ho Ho",
+            "Description": "Complete all the game words in the Holidays category.",
+            "Level": "Gold",
+            "AchievementProgressTracker": 28,
+            "DLC": "Holidays",
+            "Hidden": false
+        }
+    ],
+    "Achievement_All_Transport": [
+        {
+            "Name": "Motorhead",
+            "Description": "Complete all the game words in the Transport category.",
+            "Level": "Gold",
+            "AchievementProgressTracker": 28,
+            "DLC": "Transport",
+            "Hidden": false
+        }
+    ]
+}

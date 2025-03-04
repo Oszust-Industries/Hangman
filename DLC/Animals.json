@@ -1,7 +1,7 @@
 {
   "Animals": {
     "Dog": "Man's best friend",
-    "Horse": "Racing Animal",
+    "Horse": "Racing animal",
     "Cow": "Animal to milk",
     "Giraffe": "Long-necked animal",
     "Tiger": "Large wild cat",
@@ -9,6 +9,26 @@
     "Zebra": "Striped animal",
     "Rabbit": "Long-eared animal",
     "Shark": "Predatory fish",
-    "Reindeer": "Arctic animal"
+    "Reindeer": "Arctic animal",
+    "Elephant": "Largest land animal",
+    "Lion": "King of the jungle",
+    "Kangaroo": "Hops and has a pouch",
+    "Panda": "Black and white bear",
+    "Cheetah": "Fastest land animal",
+    "Dolphin": "Intelligent marine mammal",
+    "Penguin": "Flightless bird that swims",
+    "Crocodile": "Large reptile with strong jaws",
+    "Owl": "Nocturnal bird of prey",
+    "Octopus": "Eight-armed sea creature",
+    "Koala": "Australia bear",
+    "Wolf": "Wild ancestor of the dog",
+    "Hedgehog": "Spiky nocturnal creature",
+    "Squirrel": "Bushy-tailed tree climber",
+    "Bat": "The only flying mammal",
+    "Chimpanzee": "Intelligent primate",
+    "Sloth": "Slow-moving tree dweller",
+    "Armadillo": "Has a protective shell",
+    "Peacock": "Colorful, fan-tailed bird",
+    "Seahorse": "Tiny fish with a curled tail"
   }
 }

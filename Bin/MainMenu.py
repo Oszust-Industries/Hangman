@@ -51,13 +51,13 @@ class MainMenu(QWidget):
         # Menu Buttons
         playButton = QPushButton("Play Game", self.overlay)
         playButton.setStyleSheet(buttonStyle)
-        playButton.clicked.connect(lambda: self.switch_window("GameWindow"))
+        playButton.clicked.connect(self.playGame)
         self.overlayLayout.addWidget(playButton)
 
-        createWordButton = QPushButton("Create Words", self.overlay)
-        createWordButton.setStyleSheet(buttonStyle)
-        createWordButton.clicked.connect(lambda: self.switch_window("CreateWordsWindow"))
-        self.overlayLayout.addWidget(createWordButton)
+        #createWordButton = QPushButton("Create Words", self.overlay)
+        #createWordButton.setStyleSheet(buttonStyle)
+        #createWordButton.clicked.connect(lambda: self.switch_window("CreateWordsWindow"))
+        #self.overlayLayout.addWidget(createWordButton)
 
         achievementsButton = QPushButton("Achievements", self.overlay)
         achievementsButton.setStyleSheet(buttonStyle)
@@ -75,6 +75,9 @@ class MainMenu(QWidget):
         self.overlayLayout.addWidget(quitButton)
 
         self.overlay.raise_()
+
+    def playGame(self):
+        self.switch_window("GameWindow", restart=True)
 
     def resizeEvent(self, event):
         self.backgroundImage.setGeometry(0, 0, self.width(), self.height())

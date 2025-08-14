@@ -1,5 +1,5 @@
 ## Hangman Game - Oszust Industries
-## Created on: 2-11-25 - Last update: 2-13-25
+## Created on: 2-11-25 - Last update: 8-14-25
 softwareVersion = "v1.0.0"
 systemName, systemBuild = "Hangman", "dev"
 import json, os, sys
@@ -12,7 +12,6 @@ class GameSetup:
         basePath = os.path.join(os.getenv('APPDATA'), 'Oszust Industries')
         hangmanPath = os.path.join(basePath, 'Hangman Game')
         ## Create Appdata Folders
-        os.makedirs(hangmanPath, exist_ok=True)
         os.makedirs(hangmanPath, exist_ok=True)
         ## Create Achievement Save
         if os.path.exists(os.path.join(os.getenv('APPDATA'), 'Oszust Industries', 'unlockedAchievements.json')) == False:
@@ -46,7 +45,7 @@ class MainApp(QStackedWidget):
         self.setMinimumSize(800, 500)
         self.setCurrentWidget(self.MainMenuWindow)
 
-    def switchWindow(self, windowName):
+    def switchWindow(self, windowName, restart=False):
         windows = {
             "MainMenuWindow": self.MainMenuWindow,
             "GameWindow": self.GameWindow,
@@ -54,6 +53,8 @@ class MainApp(QStackedWidget):
             "AchievementsWindow": self.AchievementsWindow,
         }
         if windowName in windows:
+            if windowName == "GameWindow" and restart:
+                self.GameWindow.restart_game()
             self.setCurrentWidget(windows[windowName])
 
 if __name__ == "__main__":

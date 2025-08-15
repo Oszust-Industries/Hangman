@@ -1,0 +1,7 @@
+#!/bin/bash
+python3 -m PyInstaller Bin/Main.py \
+    --noconsole \
+    --add-data "Data:Data" \
+    --add-data "Bin:Bin" \
+    --add-data "Achievement Icons:Achievement Icons" \
+    --add-data "DLC:DLC"

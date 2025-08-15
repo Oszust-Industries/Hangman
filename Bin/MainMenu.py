@@ -1,7 +1,15 @@
 from PyQt6.QtWidgets import QApplication, QLabel, QPushButton, QVBoxLayout, QWidget
 from PyQt6.QtGui import QPixmap
-from PyQt6.QtCore import QRect, Qt 
+from PyQt6.QtCore import QRect, Qt
+import os, sys
 
+def resource_path(relative_path):
+    try:
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
 
 class MainMenu(QWidget):
     def __init__(self, switch_window):
@@ -10,7 +18,7 @@ class MainMenu(QWidget):
 
         # Background Image
         self.backgroundImage = QLabel(self)
-        self.backgroundImage.setPixmap(QPixmap("Data\\woodBackground.jpg"))
+        self.backgroundImage.setPixmap(QPixmap(resource_path(os.path.join("Data", "woodBackground.jpg"))))
         self.backgroundImage.setScaledContents(True)
         self.backgroundImage.setGeometry(0, 0, self.width(), self.height())
 
@@ -28,7 +36,7 @@ class MainMenu(QWidget):
 
         # Hangman Image
         hangmanImage = QLabel(self.overlay)
-        hangmanImage.setPixmap(QPixmap("Data\\hangmanImage.jpg"))
+        hangmanImage.setPixmap(QPixmap(resource_path(os.path.join("Data", "hangmanImage.jpg"))))
         hangmanImage.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.overlayLayout.addWidget(hangmanImage)
 

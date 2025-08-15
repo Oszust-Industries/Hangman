@@ -1,13 +1,21 @@
-import json, os
+import json, os, sys
 from PyQt6.QtWidgets import QDialog, QVBoxLayout, QCheckBox, QSpinBox, QComboBox, QPushButton, QScrollArea, QWidget, QGroupBox, QFormLayout, QHBoxLayout, QLabel, QMessageBox
 from PyQt6.QtCore import Qt
+
+def resource_path(relative_path):
+    try:
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
 
 basePath = os.path.join(os.getenv('APPDATA'), 'Oszust Industries')
 hangmanPath = os.path.join(basePath, 'Hangman Game')
 settings_file = os.path.join(hangmanPath, 'settings.json')
 unlocked_achievements_file = os.path.join(hangmanPath, 'unlockedAchievements.json')
 completed_words_file = os.path.join(hangmanPath, 'completedWords.json')
-DLC_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'DLC')
+DLC_DIR = resource_path("DLC")
 
 class SettingsWindow(QDialog):
     def __init__(self, switchWindowCallback):

@@ -4,6 +4,14 @@ from PyQt6.QtGui import QPixmap, QFont, QPalette, QColor, QImage
 from PyQt6.QtCore import Qt, QRect, QTimer
 from datetime import datetime
 
+def resource_path(relative_path):
+    try:
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
+
 def save_json(file_path, data):
     try:
         os.makedirs(os.path.dirname(file_path), exist_ok=True)
@@ -59,7 +67,7 @@ class GameWindow(QWidget):
 
         # Set background image
         self.background_image = QLabel(self)
-        self.background_image.setPixmap(QPixmap("Data\\woodBackground.jpg"))
+        self.background_image.setPixmap(QPixmap(resource_path(os.path.join("Data", "woodBackground.jpg"))))
         self.background_image.setScaledContents(True)
         self.background_image.setGeometry(0, 0, self.width(), self.height())
 
@@ -335,7 +343,7 @@ class GameWindow(QWidget):
         # Randomly pick one enabled category to load words from for this game
         chosen_category = random.choice(enabled_category_names)
         file_name = f"{chosen_category}.json"
-        file_path = os.path.join(dlc_folder, file_name)
+        file_path = resource_path(os.path.join(dlc_folder, file_name))
 
         if os.path.exists(file_path):
             category_json_data = load_json(file_path, {})
@@ -460,7 +468,7 @@ class GameWindow(QWidget):
         # Ensure within bounds
         display_image_index = max(0, min(total_images, display_image_index))
 
-        image_path = f"Data\\hangman_{display_image_index}.jpg"
+        image_path = resource_path(os.path.join("Data", f"hangman_{display_image_index}.jpg"))
 
         pixmap = QPixmap(image_path)
 

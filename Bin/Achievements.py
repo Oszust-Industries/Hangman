@@ -1,8 +1,16 @@
-import json, os
+import json, os, sys
 from PyQt6.QtWidgets import QVBoxLayout, QHBoxLayout, QLabel, QWidget, QScrollArea, QFrame, QProgressBar, QPushButton, QSpacerItem
 from PyQt6.QtGui import QPixmap
 from PyQt6.QtCore import Qt
 from datetime import datetime, timedelta
+
+def resource_path(relative_path):
+    try:
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
 
 def loadJson(filePath, default=None):
     try:
@@ -24,7 +32,7 @@ class AchievementsWindow(QWidget):
         mainLayout = QVBoxLayout(self)
 
         # Load achievements and unlocked data
-        self.achievements = loadJson(".\\Data\\Achievements.json")
+        self.achievements = loadJson(resource_path(os.path.join("Data", "Achievements.json")))
         self.unlockedData = loadJson(os.path.join(os.getenv('APPDATA'), 'Oszust Industries', 'Hangman Game', 'unlockedAchievements.json'), {})
         
         # Calculate total and unlocked achievements
@@ -117,14 +125,16 @@ class AchievementsWindow(QWidget):
 
                 # Load Achievement Image
                 if isUnlocked:
-                    imageFilename = f"Achievement Icons\\{keyName}.png"
+                    imageFilename = resource_path(os.path.join("Data", "Achievement Icons", f"{keyName}.png"))
                 else:
-                    imageFilename = f"Achievement Icons\\{keyName}_locked.png"
+                    imageFilename = resource_path(os.path.join("Data", "Achievement Icons", f"{keyName}_locked.png"))
+
                 imageLabel = QLabel()
                 if os.path.exists(imageFilename):
                     pixmap = QPixmap(imageFilename)
                 else:
-                    pixmap = QPixmap("Achievement Icons\\default.png")
+                    default_image_path = resource_path(os.path.join("Data", "Achievement Icons", "default.png"))
+                    pixmap = QPixmap(default_image_path)
 
                 imageLabel.setPixmap(pixmap)
                 achievementLayout.addWidget(imageLabel)

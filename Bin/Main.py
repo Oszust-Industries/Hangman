@@ -7,6 +7,14 @@ from PyQt6 import QtGui
 from PyQt6.QtWidgets import QApplication, QStackedWidget
 import MainMenu, Hangman, Achievements, Settings
 
+def resource_path(relative_path):
+    try:
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
+
 class GameSetup:
     def fileSetup():
         basePath = os.path.join(os.getenv('APPDATA'), 'Oszust Industries')
@@ -39,7 +47,7 @@ class MainApp(QStackedWidget):
         self.addWidget(self.SettingsWindow)
         self.addWidget(self.AchievementsWindow)
 
-        self.setWindowIcon(QtGui.QIcon('Data\\icon.png'))
+        self.setWindowIcon(QtGui.QIcon(resource_path(os.path.join("Data", "icon.png"))))
 
         self.setWindowTitle("Hangman")
         self.setMinimumSize(800, 500)

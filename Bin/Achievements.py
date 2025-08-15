@@ -125,15 +125,15 @@ class AchievementsWindow(QWidget):
 
                 # Load Achievement Image
                 if isUnlocked:
-                    imageFilename = resource_path(os.path.join("Data", "Achievement Icons", f"{keyName}.png"))
+                    imageFilename = resource_path(os.path.join("Achievement Icons", f"{keyName}.png"))
                 else:
-                    imageFilename = resource_path(os.path.join("Data", "Achievement Icons", f"{keyName}_locked.png"))
+                    imageFilename = resource_path(os.path.join("Achievement Icons", f"{keyName}_locked.png"))
 
                 imageLabel = QLabel()
                 if os.path.exists(imageFilename):
                     pixmap = QPixmap(imageFilename)
                 else:
-                    default_image_path = resource_path(os.path.join("Data", "Achievement Icons", "default.png"))
+                    default_image_path = resource_path(os.path.join("Achievement Icons", "default.png"))
                     pixmap = QPixmap(default_image_path)
 
                 imageLabel.setPixmap(pixmap)

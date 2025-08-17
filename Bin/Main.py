@@ -1,5 +1,5 @@
 ## Hangman Game - Oszust Industries
-## Created on: 2-11-25 - Last update: 8-14-25
+## Created on: 2-11-25 - Last update: 8-17-25
 softwareVersion = "v1.0.0"
 systemName, systemBuild = "Hangman", "dev"
 import json, os, sys
@@ -22,12 +22,8 @@ class GameSetup:
         ## Create Appdata Folders
         os.makedirs(hangmanPath, exist_ok=True)
         ## Create Achievement Save
-        if os.path.exists(os.path.join(os.getenv('APPDATA'), 'Oszust Industries', 'unlockedAchievements.json')) == False:
-            defaultData = {
-              "unlockedAchievements": [],
-              "unlockedAchievementsProgress": {},
-              "unlockTimes": {}
-            }
+        if os.path.exists(os.path.join(os.getenv('APPDATA'), 'Oszust Industries', 'Hangman Game', 'unlockedAchievements.json')) == False:
+            defaultData = {"unlockedAchievements": [], "unlockedAchievementsProgress": {}, "unlockTimes": {}, "win_count": 0, "unique_words_guessed": []}
             with open(os.path.join(os.getenv('APPDATA'), 'Oszust Industries', 'Hangman Game', 'unlockedAchievements.json'), 'w') as json_file:
                 json.dump(defaultData, json_file, indent=4)
 
@@ -63,6 +59,8 @@ class MainApp(QStackedWidget):
         if windowName in windows:
             if windowName == "GameWindow" and restart:
                 self.GameWindow.restart_game()
+            elif windowName == "AchievementsWindow" and restart:
+                self.AchievementsWindow.reloadAchievements()
             self.setCurrentWidget(windows[windowName])
 
 if __name__ == "__main__":

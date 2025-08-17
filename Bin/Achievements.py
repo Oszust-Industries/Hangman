@@ -12,7 +12,7 @@ def resource_path(relative_path):
 
     return os.path.join(base_path, relative_path)
 
-def loadJson(filePath, default=None):
+def load_json(filePath, default=None):
     try:
         with open(filePath, 'r', encoding='utf-8') as file:
             return json.load(file)
@@ -32,8 +32,8 @@ class AchievementsWindow(QWidget):
         mainLayout = QVBoxLayout(self)
 
         # Load achievements and unlocked data
-        self.achievements = loadJson(resource_path(os.path.join("Data", "Achievements.json")))
-        self.unlockedData = loadJson(os.path.join(os.getenv('APPDATA'), 'Oszust Industries', 'Hangman Game', 'unlockedAchievements.json'), {})
+        self.achievements = load_json(resource_path(os.path.join("Data", "Achievements.json")))
+        self.unlockedData = load_json(os.path.join(os.getenv('APPDATA'), 'Oszust Industries', 'Hangman Game', 'unlockedAchievements.json'), default={})
         
         # Calculate total and unlocked achievements
         totalAchievements = sum(len(achList) for achList in self.achievements.values())
@@ -83,6 +83,34 @@ class AchievementsWindow(QWidget):
         mainLayout.addWidget(self.buttonContainer)
 
         self.setLayout(mainLayout)
+
+    def reloadAchievements(self):
+        # Reload JSON data
+        self.achievements = load_json(resource_path(os.path.join("Data", "Achievements.json")))
+        self.unlockedData = load_json(os.path.join(os.getenv('APPDATA'), 'Oszust Industries', 'Hangman Game', 'unlockedAchievements.json'), default={})
+
+        # Update progress bar
+        totalAchievements = sum(len(achList) for achList in self.achievements.values())
+        unlockedAchievements = len(self.unlockedData.get("unlockedAchievements", []))
+
+        self.progressBar.setMinimum(0)
+        self.progressBar.setMaximum(totalAchievements)
+        self.progressBar.setValue(unlockedAchievements)
+        self.progressBar.setFormat(f"{unlockedAchievements} / {totalAchievements} Achievements")
+
+        # Clear previous content in scroll area
+        while self.layout.count():
+            item = self.layout.takeAt(0)
+            widget = item.widget()
+            if widget is not None:
+                widget.deleteLater()
+
+        # Re-display achievements
+        self.displayAchievements()
+
+        # Spacer (re-added)
+        spacer = QSpacerItem(20, 40)
+        self.layout.addItem(spacer)
 
     def displayAchievements(self):
         achievementsMeta = self.achievements
@@ -147,6 +175,9 @@ class AchievementsWindow(QWidget):
                 if achievement.get("Hidden", False) and not isUnlocked:
                     titleLabel = QLabel("Hidden Achievement")
                     titleLabel.setStyleSheet("font-weight: bold; color: white; font-size: 32px;" if isUnlocked else "color: gray;")
+                elif isUnlocked:
+                    titleLabel = QLabel(achievement.get("Name", "Unknown Achievement"))
+                    titleLabel.setStyleSheet("font-weight: bold; color: white; font-size: 12px;" if isUnlocked else "color: white;")
                 else:
                     titleLabel = QLabel(achievement.get("Name", "Unknown Achievement"))
                     titleLabel.setStyleSheet("font-weight: bold; color: white; font-size: 32px;" if isUnlocked else "color: gray;")
@@ -167,15 +198,29 @@ class AchievementsWindow(QWidget):
                 progressLayout = QHBoxLayout()
                 progressLayout.setAlignment(Qt.AlignmentFlag.AlignRight)
 
-                if isUnlocked: # Unlock Time
-                    unlockDatetime = datetime.strptime(self.unlocked_data.get("unlockTimes", {}).get(keyName, "Unknown Time"), "%Y-%m-%d %H:%M:%S.%f")
-
-                    if unlockDatetime.date() == datetime.now().date():
-                        formattedTime = f"Today at {unlockDatetime.strftime('%I:%M %p').lstrip('0')}"
-                    elif unlockDatetime.date() == (datetime.now() - timedelta(days=1)).date():
-                        formattedTime = f"Yesterday at {unlockDatetime.strftime('%I:%M %p').lstrip('0')}"
+                if isUnlocked:  # Unlock Time
+                    unlock_time_str = self.unlockedData.get("unlockTimes", {}).get(keyName, None)
+    
+                    if unlock_time_str:
+                        try:
+                            unlockDatetime = datetime.strptime(unlock_time_str.strip(), "%Y-%m-%d %H:%M:%S.%f")
+                        except ValueError:
+                            unlockDatetime = None
                     else:
-                        formattedTime = unlockDatetime.strftime("%B %d, %Y at %I:%M %p").replace(" 0", " ")
+                        unlockDatetime = None
+
+                    if unlockDatetime is None:
+                        formattedTime = "Unknown Time"
+                    else:
+                        today = datetime.now().date()
+                        yesterday = today - timedelta(days=1)
+
+                        if unlockDatetime.date() == today:
+                            formattedTime = f"Today at {unlockDatetime.strftime('%I:%M %p').lstrip('0')}"
+                        elif unlockDatetime.date() == yesterday:
+                            formattedTime = f"Yesterday at {unlockDatetime.strftime('%I:%M %p').lstrip('0')}"
+                        else:
+                            formattedTime = unlockDatetime.strftime("%B %d, %Y at %I:%M %p").replace(" 0", " ")
 
                     unlockLabel = QLabel(f"Unlocked: {formattedTime}")
                     unlockLabel.setStyleSheet("color: lightgray; font-size: 12px;")

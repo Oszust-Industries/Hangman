@@ -69,7 +69,7 @@ class MainMenu(QWidget):
 
         achievementsButton = QPushButton("Achievements", self.overlay)
         achievementsButton.setStyleSheet(buttonStyle)
-        achievementsButton.clicked.connect(lambda: self.switch_window("AchievementsWindow"))
+        achievementsButton.clicked.connect(lambda: self.switch_window("AchievementsWindow", restart=True))
         self.overlayLayout.addWidget(achievementsButton)
 
         settingsButton = QPushButton("Settings", self.overlay)

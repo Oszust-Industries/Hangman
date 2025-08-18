@@ -1,149 +1,146 @@
-import json, sys, random, os
-from PyQt6.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QLineEdit, QDialog, QCheckBox, QMessageBox, QScrollArea, QWidget, QFrame, QProgressBar, QGridLayout, QSpacerItem
+from PyQt6.QtWidgets import QApplication, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QLineEdit, QMessageBox, QWidget, QFrame, QGridLayout
 from PyQt6.QtGui import QPixmap, QFont, QPalette, QColor, QImage
-from PyQt6.QtCore import Qt, QRect, QTimer
+from PyQt6.QtCore import Qt, QTimer
 from datetime import datetime
+import json, sys, random, os
 
-def resource_path(relative_path):
+def resource_path(relativePath):
     try:
-        base_path = sys._MEIPASS
+        basePath = sys._MEIPASS
     except Exception:
-        base_path = os.path.abspath(".")
+        basePath = os.path.abspath(".")
 
-    return os.path.join(base_path, relative_path)
+    return os.path.join(basePath, relativePath)
 
-def save_json(file_path, data):
+def save_json(filePath, data):
     try:
-        os.makedirs(os.path.dirname(file_path), exist_ok=True)
-        with open(file_path, "w", encoding='utf-8') as file:
+        os.makedirs(os.path.dirname(filePath), exist_ok=True)
+        with open(filePath, "w", encoding='utf-8') as file:
             json.dump(data, file, indent=4)
     except IOError as e:
-        print(f"Error saving JSON to '{file_path}': {e}")
+        print(f"Error saving JSON to '{filePath}': {e}")
 
-def load_json(file_path, default=None):
+def load_json(filePath, default=None):
     try:
-        with open(file_path, 'r', encoding='utf-8') as file:
+        with open(filePath, 'r', encoding='utf-8') as file:
             return json.load(file)
     except FileNotFoundError:
         return default if default is not None else {}
     except json.JSONDecodeError as e:
-        print(f"Error decoding JSON from '{file_path}': {e}")
+        print(f"Error decoding JSON from '{filePath}': {e}")
         return default if default is not None else {}
 
 class GameWindow(QWidget):
-    def __init__(self, switch_window_callback):
+    def __init__(self, switchWindowCallback):
         super().__init__()
-        self.switch_window = switch_window_callback
+        self.switch_window = switchWindowCallback
         self.setWindowTitle("Hangman Game")
 
-        # Path to settings file (assuming it's in APPDATA)
-        self.app_data_path = os.path.join(os.getenv('APPDATA'), 'Oszust Industries', 'Hangman Game')
-        self.settings_file_path = os.path.join(self.app_data_path, 'settings.json')
-        self.unlocked_achievements_path = os.path.join(self.app_data_path, 'unlockedAchievements.json')
-        self.completed_words_path = os.path.join(self.app_data_path, 'completedWords.json')
+        ## Setting File Paths
+        self.appdataPath = os.path.join(os.getenv('APPDATA'), 'Oszust Industries', 'Hangman Game')
+        self.settingsFilePath = os.path.join(self.appdataPath, 'settings.json')
+        self.unlockedAchievementsPath = os.path.join(self.appdataPath, 'unlockedAchievements.json')
+        self.completedWordsPath = os.path.join(self.appdataPath, 'completedWords.json')
 
-        # Load settings, achievements, and completed words
-        self.settings = load_json(self.settings_file_path, self.get_default_settings())
-        # Ensure default values for tracking are present
-        default_unlocked_data = {"unlockedAchievements": [], "unlockedAchievementsProgress": {}, "unlockTimes": {}, "win_count": 0, "unique_words_guessed": []}
-        self.unlocked_data = load_json(self.unlocked_achievements_path, default_unlocked_data)
-        self.completed_words = load_json(self.completed_words_path, {})
+        ## Load Settings, Achievements, and Completed Words
+        self.settings = load_json(self.settingsFilePath, self.get_default_settings())
+        defaultUnlockedData = {"unlockedAchievements": [], "unlockedAchievementsProgress": {}, "unlockTimes": {}, "win_count": 0, "unique_words_guessed": []}
+        self.unlockedData = load_json(self.unlockedAchievementsPath, defaultUnlockedData)
+        self.completedWords = load_json(self.completedWordsPath, {})
 
-        # Load all possible achievements
-        self.achievements_file_path = resource_path(os.path.join("Data", "achievements.json"))
-        self.all_achievements = load_json(self.achievements_file_path, default={})
+        ## Load Achievements
+        self.achievementsFilePath = resource_path(os.path.join("Data", "achievements.json"))
+        self.allAchievements = load_json(self.achievementsFilePath, default={})
 
-        # Game state variables
-        self.secret_word = ""
-        self.secret_word_key = ""
-        self.guessed_letters = set()
-        self.remaining_attempts = 0
-        self.current_dlc_theme = "Base Game" # Stores the name of the current DLC/Category
-        self.current_dlc_description = "Guess the hidden word!" # Stores the description
-        self.word_data_dict = {} # Stores {word: description} for the current category
-        self.initial_strikes_limit = self.settings.get("strikes_limit", 6) # Store initial strikes limit for half-guesses calculation
-        self.incorrect_guesses_in_round = 0 # Track incorrect guesses for "Perfect Game" achievement
-        self.last_game_start_time = None # To track game duration for "Speed Demon" achievement
+        ## Game State Variables
+        self.secretWord = ""
+        self.secretWordDisplay = ""
+        self.guessedLetters = set()
+        self.remainingAttempts = 0
+        self.currentDLCTheme = "Base Game"
+        self.currentDLCDescription = "Guess the hidden word!"
+        self.wordDataDict = {}
+        self.initialStrikesLimit = self.settings.get("strikes_limit", 6)
 
-        # Set background image
-        self.background_image = QLabel(self)
-        self.background_image.setPixmap(QPixmap(resource_path(os.path.join("Data", "woodBackground.jpg"))))
-        self.background_image.setScaledContents(True)
-        self.background_image.setGeometry(0, 0, self.width(), self.height())
+        ## Set Background Image
+        self.backgroundImage = QLabel(self)
+        self.backgroundImage.setPixmap(QPixmap(resource_path(os.path.join("Data", "woodBackground.jpg"))))
+        self.backgroundImage.setScaledContents(True)
+        self.backgroundImage.setGeometry(0, 0, self.width(), self.height())
 
-        # Main layout (vertical)
-        self.main_layout = QVBoxLayout(self)
-        self.main_layout.setContentsMargins(20, 20, 20, 20) # Add some padding
-        self.setLayout(self.main_layout)
+        ## Main Layout (Vertical)
+        self.mainLayout = QVBoxLayout(self)
+        self.mainLayout.setContentsMargins(20, 20, 20, 20)
+        self.setLayout(self.mainLayout)
 
-        # Header with Menu and Give Up Buttons
-        self.header_layout = QHBoxLayout()
-        self.menu_button = QPushButton("Menu")
-        self.menu_button.clicked.connect(self.open_menu)
-        self.menu_button.setStyleSheet(self.get_button_style())
-        self.header_layout.addWidget(self.menu_button, alignment=Qt.AlignmentFlag.AlignLeft)
+        ## Header with Menu and Give Up Buttons
+        self.headerLayout = QHBoxLayout()
+        self.menuButton = QPushButton("Menu")
+        self.menuButton.clicked.connect(self.open_menu)
+        self.menuButton.setStyleSheet(self.get_button_style())
+        self.headerLayout.addWidget(self.menuButton, alignment=Qt.AlignmentFlag.AlignLeft)
 
-        # DLC Theme Label (new)
-        self.dlc_theme_label = QLabel(self.current_dlc_theme)
-        self.dlc_theme_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.dlc_theme_label.setStyleSheet("font-size: 20px; font-weight: bold; color: white;")
-        self.header_layout.addWidget(self.dlc_theme_label, alignment=Qt.AlignmentFlag.AlignCenter)
+        ## DLC Theme Label
+        self.DLCThemeLabel = QLabel(self.currentDLCTheme)
+        self.DLCThemeLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.DLCThemeLabel.setStyleSheet("font-size: 20px; font-weight: bold; color: white;")
+        self.headerLayout.addWidget(self.DLCThemeLabel, alignment=Qt.AlignmentFlag.AlignCenter)
 
+        ## Give Up Button
+        self.giveUpButton = QPushButton("Give Up")
+        self.giveUpButton.clicked.connect(self.give_up)
+        self.giveUpButton.setStyleSheet(self.get_button_style())
+        self.headerLayout.addWidget(self.giveUpButton, alignment=Qt.AlignmentFlag.AlignRight)
+        self.mainLayout.addLayout(self.headerLayout)
 
-        self.give_up_button = QPushButton("Give Up") # Renamed from hint_button
-        self.give_up_button.clicked.connect(self.give_up) # Connected to new give_up method
-        self.give_up_button.setStyleSheet(self.get_button_style())
-        self.header_layout.addWidget(self.give_up_button, alignment=Qt.AlignmentFlag.AlignRight)
-        self.main_layout.addLayout(self.header_layout)
+        ## Dynamic Hangman Image
+        self.hangmanImage = QLabel(self)
+        self.hangmanImage.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.mainLayout.addWidget(self.hangmanImage)
 
-        # Hangman image that changes based on remaining attempts
-        self.hangman_image = QLabel(self)
-        self.hangman_image.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.main_layout.addWidget(self.hangman_image)
+        ## Word Display Label
+        self.wordLabel = QLabel("")
+        self.wordLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.mainLayout.addWidget(self.wordLabel)
 
-        # Word display label
-        self.word_label = QLabel("")
-        self.word_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.main_layout.addWidget(self.word_label)
-
-        # Status label for attempts / DLC description
-        self.status_label = QLabel("")
-        self.status_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.main_layout.addWidget(self.status_label)
+        # Status Label for Attempts and Hints
+        self.statusLabel = QLabel("")
+        self.statusLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.mainLayout.addWidget(self.statusLabel)
 
         # Input and Guess Button Layout
-        self.input_layout = QHBoxLayout()
-        self.guess_input = QLineEdit()
-        self.guess_input.setPlaceholderText("Enter a letter or word")
-        self.guess_input.returnPressed.connect(self.make_guess) # Allow pressing Enter
-        self.input_layout.addWidget(self.guess_input)
+        self.inputLayout = QHBoxLayout()
+        self.guessInput = QLineEdit()
+        self.guessInput.setPlaceholderText("Enter a letter or word")
+        self.guessInput.returnPressed.connect(self.make_guess)
+        self.inputLayout.addWidget(self.guessInput)
 
-        self.guess_button = QPushButton("Guess")
-        self.guess_button.clicked.connect(self.make_guess)
-        self.guess_button.setStyleSheet(self.get_button_style())
-        self.input_layout.addWidget(self.guess_button)
-        self.main_layout.addLayout(self.input_layout)
+        self.guessButton = QPushButton("Guess")
+        self.guessButton.clicked.connect(self.make_guess)
+        self.guessButton.setStyleSheet(self.get_button_style())
+        self.inputLayout.addWidget(self.guessButton)
+        self.mainLayout.addLayout(self.inputLayout)
 
-        # On-Screen Keyboard
-        self.keyboard_frame = QFrame(self)
-        self.keyboard_layout = QGridLayout(self.keyboard_frame)
-        self.keyboard_frame.setLayout(self.keyboard_layout)
+        ## On-Screen Keyboard
+        self.keyboardFrame = QFrame(self)
+        self.keyboardLayout = QGridLayout(self.keyboardFrame)
+        self.keyboardFrame.setLayout(self.keyboardLayout)
         self.create_on_screen_keyboard()
-        self.main_layout.addWidget(self.keyboard_frame, alignment=Qt.AlignmentFlag.AlignCenter)
+        self.mainLayout.addWidget(self.keyboardFrame, alignment=Qt.AlignmentFlag.AlignCenter)
 
-        # Restart Button
-        self.restart_button = QPushButton("Play Again")
-        self.restart_button.clicked.connect(self.restartButton)
-        self.restart_button.setStyleSheet(self.get_button_style())
-        self.restart_button.hide() # Hide initially
-        self.main_layout.addWidget(self.restart_button, alignment=Qt.AlignmentFlag.AlignCenter)
+        ## Restart Button
+        self.restartButton = QPushButton("Play Again")
+        self.restartButton.clicked.connect(self.restart_button)
+        self.restartButton.setStyleSheet(self.get_button_style())
+        self.restartButton.hide()
+        self.mainLayout.addWidget(self.restartButton, alignment=Qt.AlignmentFlag.AlignCenter)
 
-        self.apply_settings() # Apply initial settings
-        self.restart_game() # Start a new game
+        self.apply_settings()
+        self.restart_game()
 
-        # Achievement popup (initially hidden)
-        self.achievement_popup = QLabel(self)
-        self.achievement_popup.setStyleSheet("""
+        ## Achievement Popup
+        self.achievementPopup = QLabel(self)
+        self.achievementPopup.setStyleSheet("""
             background-color: rgba(0, 0, 0, 180);
             color: white;
             padding: 10px;
@@ -151,14 +148,14 @@ class GameWindow(QWidget):
             font-weight: bold;
             font-size: 16px;
         """)
-        self.achievement_popup.setAlignment(Qt.AlignmentFlag.AlignBottom | Qt.AlignmentFlag.AlignRight)
-        self.achievement_popup.hide()
-        self.achievement_timer = QTimer(self)
-        self.achievement_timer.timeout.connect(self.hide_achievement_popup)
+        self.achievementPopup.setAlignment(Qt.AlignmentFlag.AlignBottom | Qt.AlignmentFlag.AlignRight)
+        self.achievementPopup.hide()
+        self.achievementTimer = QTimer(self)
+        self.achievementTimer.timeout.connect(self.hide_achievement_popup)
 
         self.check_and_unlock_achievement("Achievement_Welcome")
 
-    def restartButton(self):
+    def restart_button(self):
         self.check_and_unlock_achievement("Achievement_Keep_Playing")
         self.restart_game()
 
@@ -175,20 +172,18 @@ class GameWindow(QWidget):
         }
 
     def refresh_data_from_files(self):
-        # Define a default structure for achievements in case the file is not found
-        default_unlocked_data = {
+        defaultUnlockedData = {
             "unlockedAchievements": [],
             "unlockedAchievementsProgress": {},
             "unlockTimes": {},
             "win_count": 0,
             "unique_words_guessed": []
         }
-        # Reload the achievements data from the specified path
-        self.unlocked_data = load_json(self.unlocked_achievements_path, default_unlocked_data)
+        # Reload Achievements Data
+        self.unlockedData = load_json(self.unlockedAchievementsPath, defaultUnlockedData)
 
-        # Reload the completed words data from the specified path
-        # It's set to a dictionary by default, to handle the new category structure
-        self.completed_words = load_json(self.completed_words_path, {})
+        # Reload Copleted Words Data
+        self.completedWords = load_json(self.completedWordsPath, {})
 
     def get_button_style(self):
         if self.settings.get("high_contrast_mode", False):
@@ -234,330 +229,306 @@ class GameWindow(QWidget):
             """
 
     def apply_settings(self):
-        # Load latest settings in case they were changed in SettingsWindow
-        self.settings = load_json(self.settings_file_path, self.get_default_settings())
+        ## Load Settings
+        self.settings = load_json(self.settingsFilePath, self.get_default_settings())
 
-        # High Contrast Mode
+        ## High Contrast Mode
         if self.settings.get("high_contrast_mode", False):
             palette = QPalette()
-            palette.setColor(QPalette.Window, QColor(0, 0, 0)) # Black background
-            palette.setColor(QPalette.WindowText, QColor(255, 255, 0)) # Yellow text
-            palette.setColor(QPalette.Base, QColor(50, 50, 50)) # Dark gray for input fields
-            palette.setColor(QPalette.Text, QColor(255, 255, 0)) # Yellow text for input fields
+            palette.setColor(QPalette.Window, QColor(0, 0, 0))
+            palette.setColor(QPalette.WindowText, QColor(255, 255, 0))
+            palette.setColor(QPalette.Base, QColor(50, 50, 50))
+            palette.setColor(QPalette.Text, QColor(255, 255, 0))
             self.setPalette(palette)
             self.setStyleSheet("QLabel { color: yellow; } QLineEdit { background-color: #323232; color: yellow; border: 1px solid yellow; }")
-            self.background_image.hide() # Hide background image in high contrast
+            self.backgroundImage.hide()
         else:
-            self.setPalette(QApplication.instance().palette()) # Reset to default palette
-            self.setStyleSheet("") # Clear custom stylesheet
-            self.background_image.show() # Show background image
+            self.setPalette(QApplication.instance().palette())
+            self.setStyleSheet("")
+            self.backgroundImage.show()
 
-        # Font Size
-        font_size_setting = self.settings.get("font_size", "Medium")
-        if font_size_setting == "Small":
-            font_size = 18
-        elif font_size_setting == "Large":
-            font_size = 30
-        else: # Medium
-            font_size = 24
+        ## Font Size
+        fontSizeSetting = self.settings.get("font_size", "Medium")
+        if fontSizeSetting == "Small":
+            fontSize = 18
+        elif fontSizeSetting == "Large":
+            fontSize = 30
+        else:
+            fontSize = 24
 
-        self.word_label.setFont(QFont("Arial", font_size))
-        self.status_label.setFont(QFont("Arial", int(font_size * 0.75))) # Slightly smaller for status
-        self.guess_input.setFont(QFont("Arial", int(font_size * 0.8)))
-        self.dlc_theme_label.setFont(QFont("Arial", int(font_size * 0.85))) # Adjust DLC theme font size
+        self.wordLabel.setFont(QFont("Arial", fontSize))
+        self.statusLabel.setFont(QFont("Arial", int(fontSize * 0.75)))
+        self.guessInput.setFont(QFont("Arial", int(fontSize * 0.8)))
+        self.DLCThemeLabel.setFont(QFont("Arial", int(fontSize * 0.85)))
 
-        # Update button styles for high contrast
-        self.menu_button.setStyleSheet(self.get_button_style())
-        self.give_up_button.setStyleSheet(self.get_button_style()) # Updated button name
-        self.guess_button.setStyleSheet(self.get_button_style())
-        self.restart_button.setStyleSheet(self.get_button_style())
-        for button in self.keyboard_frame.findChildren(QPushButton):
+        ## High Contrast Mode Button Styles
+        self.menuButton.setStyleSheet(self.get_button_style())
+        self.giveUpButton.setStyleSheet(self.get_button_style())
+        self.guessButton.setStyleSheet(self.get_button_style())
+        self.restartButton.setStyleSheet(self.get_button_style())
+        for button in self.keyboardFrame.findChildren(QPushButton):
             button.setStyleSheet(self.get_button_style())
 
-        # On-Screen Keyboard Visibility
-        self.keyboard_frame.setVisible(self.settings.get("enable_on_screen_keyboard", True)) # Default to True
+        ## On-Screen Keyboard Visibility
+        self.keyboardFrame.setVisible(self.settings.get("enable_on_screen_keyboard", True))
 
-        # Give Up Button Visibility (always visible, but its function changes)
-        self.give_up_button.setVisible(True)
+        ## Give Up Button Visibility
+        self.giveUpButton.setVisible(True)
 
-        # Strikes Limit
-        self.remaining_attempts = self.settings.get("strikes_limit", 6)
-        self.initial_strikes_limit = self.settings.get("strikes_limit", 6) # Store initial strikes limit for half-guesses calculation
-        self.update_status_label() # Update status label based on settings and DLC info
-        self.update_hangman_image() # Update hangman image based on new strike limit
+        ## Strikes Limit
+        self.remainingAttempts = self.settings.get("strikes_limit", 6)
+        self.initialStrikesLimit = self.settings.get("strikes_limit", 6)
+        self.update_status_label()
+        self.update_hangman_image()
 
 
     def create_on_screen_keyboard(self):
-        # Clear existing buttons if any
-        for i in reversed(range(self.keyboard_layout.count())):
-            widget = self.keyboard_layout.itemAt(i).widget()
+        ## Clear Existing Buttons
+        for i in reversed(range(self.keyboardLayout.count())):
+            widget = self.keyboardLayout.itemAt(i).widget()
             if widget:
                 widget.setParent(None)
 
-        keyboard_rows = [
+        keyboardRows = [
             "QWERTYUIOP",
             "ASDFGHJKL",
             "ZXCVBNM"
         ]
-    
-        button_size = 60  # Consistent button size
+        buttonSize = 60
+        self.keyboardLayout.setVerticalSpacing(2)  
 
-        # Reduce vertical spacing for the whole grid
-        self.keyboard_layout.setVerticalSpacing(2)  
+        for rowIdx, rowLetters in enumerate(keyboardRows):
+            bottomRowHorizontalLayout = QHBoxLayout()
+            bottomRowHorizontalLayout.setContentsMargins(0, 0, 0, 0)
+            bottomRowHorizontalLayout.setSpacing(5)
+            bottomRowHorizontalLayout.addStretch(1)
 
-        for row_idx, row_letters in enumerate(keyboard_rows):
-            bottom_row_h_layout = QHBoxLayout()
-            bottom_row_h_layout.setContentsMargins(0, 0, 0, 0)  # Remove layout margins
-            bottom_row_h_layout.setSpacing(5)  # Space between keys in the same row
-            bottom_row_h_layout.addStretch(1)  # Push buttons to center
-
-            for letter in row_letters:
+            for letter in rowLetters:
                 button = QPushButton(letter)
-                button.setFixedSize(button_size, button_size)
+                button.setFixedSize(buttonSize, buttonSize)
                 button.clicked.connect(lambda _, l=letter: self.process_keyboard_guess(l))
                 button.setStyleSheet(self.get_button_style())
-                bottom_row_h_layout.addWidget(button)
+                bottomRowHorizontalLayout.addWidget(button)
 
-            bottom_row_h_layout.addStretch(1)
+            bottomRowHorizontalLayout.addStretch(1)
 
-            dummy_widget = QWidget()
-            dummy_widget.setLayout(bottom_row_h_layout)
-            self.keyboard_layout.addWidget(dummy_widget, row_idx, 0, 1, self.keyboard_layout.columnCount())
-            self.keyboard_layout.setRowStretch(row_idx, 0)  # No vertical expansion
+            dummyWidget = QWidget()
+            dummyWidget.setLayout(bottomRowHorizontalLayout)
+            self.keyboardLayout.addWidget(dummyWidget, rowIdx, 0, 1, self.keyboardLayout.columnCount())
+            self.keyboardLayout.setRowStretch(rowIdx, 0)
 
-        # Ensure columns still stretch evenly
-        for i in range(self.keyboard_layout.columnCount()):
-            self.keyboard_layout.setColumnStretch(i, 1)
-
+        ## Ensure Column Stretching
+        for i in range(self.keyboardLayout.columnCount()):
+            self.keyboardLayout.setColumnStretch(i, 1)
 
     def process_keyboard_guess(self, letter):
-        self.guess_input.setText(letter)
+        self.guessInput.setText(letter)
         self.make_guess()
 
     def load_words(self):
-        """Loads words from JSON files based on enabled categories/DLC.
-           Returns (word_data_dict, selected_category_name, category_description).
-           word_data_dict will be a dictionary of {word: description}.
-        """
-        word_data_dict = {}
-        dlc_folder = "DLC"
-        
-        # Get enabled categories from settings
-        enabled_categories_dict = self.settings.get("categories", {"Movies": True}) # Default to Movies enabled
-        enabled_category_names = [name for name, checked in enabled_categories_dict.items() if checked]
+        ## Get Enabled Categories from Settings
+        enabledCategoriesDict = self.settings.get("categories", {"Movies": True})
+        enabledCategoryNames = [name for name, checked in enabledCategoriesDict.items() if checked]
+        selectedCategoryName = "Base Game"
+        categoryDescription = "Guess the hidden word!"
+        wordDataDict = {}
 
-        selected_category_name = "Base Game"
-        category_description = "Guess the hidden word!"
-
-        if not enabled_category_names:
+        if not enabledCategoryNames:
             QMessageBox.warning(self, "No Categories Enabled", "Please enable at least one category in settings to play. Using default words.")
             return {"HANGMAN": "A classic word guessing game."}, "Default Words", "A general set of words."
 
-        # Randomly pick one enabled category to load words from for this game
-        chosen_category = random.choice(enabled_category_names)
-        file_name = f"{chosen_category}.json"
-        file_path = resource_path(os.path.join(dlc_folder, file_name))
+        ## Randomly pick one enabled category to load words from for this game
+        chosenCategory = random.choice(enabledCategoryNames)
+        fileName = f"{chosenCategory}.json"
+        filePath = resource_path(os.path.join("DLC", fileName))
 
-        if os.path.exists(file_path):
-            category_json_data = load_json(file_path, {})
-            if isinstance(category_json_data, dict):
-                if chosen_category in category_json_data and isinstance(category_json_data[chosen_category], dict):
-                    word_data_dict = category_json_data[chosen_category]
-                    selected_category_name = chosen_category
-                    category_description = f"Words related to {chosen_category}."
+        if os.path.exists(filePath):
+            categoryJsonData = load_json(filePath, {})
+            if isinstance(categoryJsonData, dict):
+                if chosenCategory in categoryJsonData and isinstance(categoryJsonData[chosenCategory], dict):
+                    wordDataDict = categoryJsonData[chosenCategory]
+                    selectedCategoryName = chosenCategory
+                    categoryDescription = f"Words related to {chosenCategory}."
                 else:
-                    print(f"Warning: Unexpected JSON structure for category '{chosen_category}' in {file_path}. Expected a dictionary under the category key.")
-                    word_data_dict = {"HANGMAN": "A classic word guessing game."}
-                    selected_category_name = "Default Words"
-                    category_description = "A general set of words."
+                    print(f"Warning: Unexpected JSON structure for category '{chosenCategory}' in {filePath}. Expected a dictionary under the category key.")
+                    wordDataDict = {"HANGMAN": "A classic word guessing game."}
+                    selectedCategoryName = "Default Words"
+                    categoryDescription = "A general set of words."
             else:
-                print(f"Warning: Unexpected top-level JSON structure in {file_path}. Expected a dictionary.")
-                word_data_dict = {"HANGMAN": "A classic word guessing game."}
-                selected_category_name = "Default Words"
-                category_description = "A general set of words."
+                print(f"Warning: Unexpected top-level JSON structure in {filePath}. Expected a dictionary.")
+                wordDataDict = {"HANGMAN": "A classic word guessing game."}
+                selectedCategoryName = "Default Words"
+                categoryDescription = "A general set of words."
         else:
-            print(f"Warning: Category file not found: {file_path}. Using default words.")
+            print(f"Warning: Category file not found: {filePath}. Using default words.")
         
-        if not word_data_dict:
-            word_data_dict = {"HANGMAN": "A classic word guessing game."}
-            selected_category_name = "Default Words"
-            category_description = "A general set of words."
+        if not wordDataDict:
+            wordDataDict = {"HANGMAN": "A classic word guessing game."}
+            selectedCategoryName = "Default Words"
+            categoryDescription = "A general set of words."
             QMessageBox.warning(self, "No Words Loaded", "No words found for selected categories or files are missing/invalid. Using default words.")
         
-        return word_data_dict, selected_category_name, category_description
+        return wordDataDict, selectedCategoryName, categoryDescription
 
     def display_word(self):
-        return " ".join(letter if letter in self.guessed_letters else "_" for letter in self.secret_word)
+        return " ".join(letter if letter in self.guessedLetters else "_" for letter in self.secretWord)
 
     def make_guess(self):
-        guess = self.guess_input.text().strip().upper()
-        self.guess_input.clear()
+        guess = self.guessInput.text().strip().upper()
+        fullWordGuessingMode = self.settings.get("full_word_guessing", "Off")
+        self.guessInput.clear()
 
         if not guess:
-            return # Do nothing if input is empty
+            return
 
         self.check_and_unlock_achievement("Achievement_Welcome")
 
-        full_word_guessing_mode = self.settings.get("full_word_guessing", "Off") # Default to Off
-
-        if len(guess) > 1: # Full word guess
-            if full_word_guessing_mode == "Off":
-                self.incorrect_guesses_in_round += 1
+        ## Full Word Guess
+        if len(guess) > 1: 
+            if fullWordGuessingMode == "Off":
+                self.incorrectGuessesInRound += 1
                 return
-            elif not guess.isalpha():
+            elif not guess.isalpha(): ## Check for Real Letters
+                self.check_and_unlock_achievement("Achievement_Alphabet")
                 return
-            if guess == self.secret_word:
+            if guess == self.secretWord:
                 self.check_and_unlock_achievement("Achievement_Solve_Correct")
-                if len(self.guessed_letters) == 0:
+                if len(self.guessedLetters) == 0:
                     self.check_and_unlock_achievement("Achievement_Solve_Correct_No_Help")
-                for letter in self.secret_word: # Reveal all letters
-                    self.guessed_letters.add(letter)
-                self.word_label.setText(self.display_word())
+                for letter in self.secretWord: ## Reveal all letters
+                    self.guessedLetters.add(letter)
+                self.wordLabel.setText(self.display_word())
                 self.end_game(win=True)
             else:
                 self.check_and_unlock_achievement("Achievement_Solve_Wrong")
-                self.remaining_attempts -= 1
-                self.incorrect_guesses_in_round += 1
+                self.remainingAttempts -= 1
+                self.incorrectGuessesInRound += 1
                 self.update_status_label()
                 self.update_hangman_image()
-                if self.remaining_attempts == 0:
+                if self.remainingAttempts == 0:
                     self.end_game(win=False)
                 else:
                     QMessageBox.information(self, "Incorrect Word!", f"'{guess}' is not the word. You lost 1 attempt.")
-
-        else: # Single letter guess
-            if not guess.isalpha() and guess != " ": # Check for actual letters or space
+        ## Single Letter Guess
+        else:
+            if guess == " ":
+                return
+            elif not guess.isalpha() and guess != " ": ## Check for Real Letters
                 self.check_and_unlock_achievement("Achievement_Alphabet")
-                QMessageBox.warning(self, "Invalid Input", "Please enter a single letter.")
+                QMessageBox.warning(self, "Invalid Input", "Please enter a letter from American Alphabet.")
                 return
 
-            if guess == " ":
-                pass
-
-            if guess in self.guessed_letters:
+            elif guess in self.guessedLetters: ## Already Guessed
                 self.check_and_unlock_achievement("Achievement_Same_Letter")
                 QMessageBox.warning(self, "Already Guessed", f"You've already guessed '{guess}'.")
                 return
 
-            self.guessed_letters.add(guess)
-            # Disable keyboard button for guessed letter
-            for button in self.keyboard_frame.findChildren(QPushButton):
+            self.guessedLetters.add(guess)
+            ## Disable Keyboard Button
+            for button in self.keyboardFrame.findChildren(QPushButton):
                 if button.text() == guess:
                     button.setDisabled(True)
                     break
 
-            if guess in self.secret_word:
-                self.word_label.setText(self.display_word())
+            if guess in self.secretWord:
+                self.wordLabel.setText(self.display_word())
                 if "_" not in self.display_word():
                     self.end_game(win=True)
             else:
-                self.remaining_attempts -= 1
-                self.incorrect_guesses_in_round += 1 # Track incorrect guesses
+                self.remainingAttempts -= 1
+                self.incorrectGuessesInRound += 1
                 self.update_status_label()
                 self.update_hangman_image()
-                if self.remaining_attempts == 0:
+                if self.remainingAttempts == 0:
                     self.end_game(win=False)
 
     def update_status_label(self):
-        hints_mode = self.settings.get("hints_mode", "Auto")
+        hintsMode = self.settings.get("hints_mode", "Auto")
 
-        if hints_mode == "Always":
-            self.status_label.setText(self.word_data_dict.get(self.secret_word_key, "Guess the hidden word!"))
-        elif hints_mode == "Auto":
-            half_strikes_limit = self.initial_strikes_limit // 2
-            if self.remaining_attempts <= half_strikes_limit:
-                self.status_label.setText(self.word_data_dict.get(self.secret_word_key, "Guess the hidden word!"))
+        if hintsMode == "Always":
+            self.statusLabel.setText(self.wordDataDict.get(self.secretWordDisplay, "Guess the hidden word!"))
+        elif hintsMode == "Auto":
+            halfStrikesLimit = self.initialStrikesLimit // 2
+            if self.remainingAttempts <= halfStrikesLimit:
+                self.statusLabel.setText(self.wordDataDict.get(self.secretWordDisplay, "Guess the hidden word!"))
             else:
-                self.status_label.setText(f"Remaining Attempts: {self.remaining_attempts}")
+                self.statusLabel.setText(f"Remaining Attempts: {self.remainingAttempts}")
         else:
-            self.status_label.setText(f"Remaining Attempts: {self.remaining_attempts}")
+            self.statusLabel.setText(f"Remaining Attempts: {self.remainingAttempts}")
 
     def update_hangman_image(self):
-        max_attempts = self.settings.get("strikes_limit", 6)
-        total_images = 6
+        maxAttempts = self.settings.get("strikes_limit", 6)
 
-        # Calculate fraction of strikes taken
-        strikes_taken = max_attempts - self.remaining_attempts
-        progress = strikes_taken / max_attempts  # value between 0 and 1
+        ## Calculate Fraction of Attempts Taken
+        strikesTaken = maxAttempts - self.remainingAttempts
+        progress = strikesTaken / maxAttempts  # value between 0 and 1
+        displayImageIndex = round(progress * 6)
+        displayImageIndex = max(0, min(6, displayImageIndex))
+        imagePath = resource_path(os.path.join("Data", f"hangman_{displayImageIndex}.jpg"))
+        pixmap = QPixmap(imagePath)
 
-        # Map to closest image index
-        display_image_index = round(progress * total_images)
-
-        # Ensure within bounds
-        display_image_index = max(0, min(total_images, display_image_index))
-
-        image_path = resource_path(os.path.join("Data", f"hangman_{display_image_index}.jpg"))
-
-        pixmap = QPixmap(image_path)
-
-        if os.path.exists(image_path):
-            pixmap.load(image_path)
+        if os.path.exists(imagePath):
+            pixmap.load(imagePath)
         else:
-            # Create a simple blank image if the specific hangman image is not found
-            blank_image = QImage(200, 200, QImage.Format.Format_ARGB32)
-            blank_image.fill(QColor(0, 0, 0, 0)) # Fully transparent
-            pixmap = QPixmap.fromImage(blank_image)
-            print(f"Warning: Hangman image not found: {image_path}. Using a blank placeholder.")
+            ## Create a simple blank image if the specific hangman image is not found
+            blankImage = QImage(200, 200, QImage.Format.Format_ARGB32)
+            blankImage.fill(QColor(0, 0, 0, 0))
+            pixmap = QPixmap.fromImage(blankImage)
+            print(f"Warning: Hangman image not found: {imagePath}. Using a blank placeholder.")
 
-        self.hangman_image.setPixmap(pixmap.scaled(200, 200, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation))
+        self.hangmanImage.setPixmap(pixmap.scaled(200, 200, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation))
 
     def give_up(self):
         reply = QMessageBox.question(self, "Give Up?",
                                      "Are you sure you want to give up? The word will be revealed.",
                                      QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
         if reply == QMessageBox.StandardButton.Yes:
-            self.word_label.setText(self.secret_word)
+            self.wordLabel.setText(self.secretWord)
             self.end_game(win=False)
         else:
-            pass # Continue game if "No" is pressed
-
+            pass
 
     def open_menu(self):
         self.check_and_unlock_achievement("Achievement_Stop_Playing")
-        if len(self.guessed_letters) > 0:
+        if len(self.guessedLetters) > 0:
             self.check_and_unlock_achievement("Achievement_Terminate")
         self.switch_window("MainMenuWindow")
 
     def end_game(self, win):
+        totalCompletedWords = self.unlockedData["unlockedAchievementsProgress"].get("Achievement_All_Topics", 0)
+        self.unlockedData["unlockedAchievementsProgress"]["Achievement_All_Topics"] = (totalCompletedWords + 1)
 
-        total_completed_words = self.unlocked_data["unlockedAchievementsProgress"].get("Achievement_All_Topics", 0)
-        self.unlocked_data["unlockedAchievementsProgress"]["Achievement_All_Topics"] = (total_completed_words + 1)
-
+        ## Win Game
         if win:
-            QMessageBox.information(self, "You Win!", f"Congratulations! The word was '{self.secret_word}'.")
-            
             self.check_and_unlock_achievement("Achievement_Winner")
 
-            if self.remaining_attempts == 1:
+            if self.remainingAttempts == 1:
                 self.check_and_unlock_achievement("Achievement_Close_Call")
 
             if self.settings.get("hints_mode", "Auto") == "Never":
                 self.check_and_unlock_achievement("Achievement_Hard_Mode")
 
-            # Update win count and save completed word
+            ## Update Win Count and Unique Words Guessed
+            if "unique_words_guessed" not in self.unlockedData:
+                self.unlockedData["unique_words_guessed"] = []
 
-            if "unique_words_guessed" not in self.unlocked_data:
-                self.unlocked_data["unique_words_guessed"] = []
+            self.unlockedData["win_count"] = self.unlockedData.get("win_count", 0) + 1
+            if self.secretWord not in self.unlockedData.get("unique_words_guessed", []):
+                self.unlockedData["unique_words_guessed"].append(self.secretWord)
 
-            self.unlocked_data["win_count"] = self.unlocked_data.get("win_count", 0) + 1
-            if self.secret_word not in self.unlocked_data.get("unique_words_guessed", []):
-                self.unlocked_data["unique_words_guessed"].append(self.secret_word)
+            ## Add Word to Completed Words
+            completedInCategory = self.completedWords.get(self.currentDLCTheme, [])
+            if self.secretWord not in completedInCategory:
+                if self.currentDLCTheme not in self.completedWords:
+                    self.completedWords[self.currentDLCTheme] = []
+                self.completedWords[self.currentDLCTheme].append(self.secretWord)
+                save_json(self.completedWordsPath, self.completedWords)
 
-            # Check if the word is already in the completed list for its category
-            completed_in_category = self.completed_words.get(self.current_dlc_theme, [])
-            if self.secret_word not in completed_in_category:
-                # If not, add it to the category list and save the file
-                if self.current_dlc_theme not in self.completed_words:
-                    self.completed_words[self.current_dlc_theme] = []
-                self.completed_words[self.current_dlc_theme].append(self.secret_word)
-                save_json(self.completed_words_path, self.completed_words)
-
-                # Get the new count of completed words for the current category
-                new_completed_count = len(self.completed_words.get(self.current_dlc_theme, []))
+                ## Get the New Completed Count for the Current Category
+                newCompletedCount = len(self.completedWords.get(self.currentDLCTheme, []))
                 
-                # Get the current progress for this specific category-based achievement
-                # We assume the achievement_id is the same as the category name (e.g., "Animals")
-                match self.current_dlc_theme:
+                ## Achievement Progress Update
+                match self.currentDLCTheme:
                     case "Animals":
                         achievementThemeName = "Achievement_All_Animals"
                     case "Baseball Teams":
@@ -581,158 +552,131 @@ class GameWindow(QWidget):
                     case "US Cities":
                         achievementThemeName = "Achievement_All_Cities"
 
-                current_progress = self.unlocked_data["unlockedAchievementsProgress"].get(achievementThemeName, 0)
-                print(f"Current progress for {achievementThemeName}: {current_progress}, New completed count: {new_completed_count}")
+                currentProgress = self.unlockedData["unlockedAchievementsProgress"].get(achievementThemeName, 0)
+                print(f"Current progress for {achievementThemeName}: {currentProgress}, New completed count: {newCompletedCount}")
                 
-                # Only update the progress if the new count is higher
-                if new_completed_count > current_progress:
-                    self.unlocked_data["unlockedAchievementsProgress"][achievementThemeName] = new_completed_count
+                ## Update Progress if Higher
+                if newCompletedCount > currentProgress:
+                    self.unlockedData["unlockedAchievementsProgress"][achievementThemeName] = newCompletedCount
                     
-            # Check for win-related achievements and save all progress
-            save_json(self.unlocked_achievements_path, self.unlocked_data)
-            self.check_and_unlock_achievement()
+        ## Save and Check Achievements
+        self.check_and_unlock_achievement()
+        save_json(self.unlockedAchievementsPath, self.unlockedData)
 
-        else:
-            # If not a win, and the game wasn't given up, show the "You Lose" message here.
-            # If it was a give up, the message is handled by give_up()
-            if self.remaining_attempts == 0 and self.word_label.text() != self.secret_word:
-                 QMessageBox.information(self, "You Lose!", f"You ran out of attempts! The word was '{self.secret_word}'.")
-        
-        save_json(self.unlocked_achievements_path, self.unlocked_data) # Save achievement progress
-
-        self.guess_input.setDisabled(True)
-        self.guess_button.setDisabled(True)
-        self.give_up_button.setDisabled(True) # Disable give up button
-        for button in self.keyboard_frame.findChildren(QPushButton):
+        self.guessInput.setDisabled(True)
+        self.guessButton.setDisabled(True)
+        self.giveUpButton.setDisabled(True)
+        for button in self.keyboardFrame.findChildren(QPushButton):
             button.setDisabled(True)
-        self.restart_button.show()
+        self.restartButton.show()
 
     def restart_game(self):
         self.refresh_data_from_files()
-        self.apply_settings() # Re-apply settings in case strikes limit changed
-        self.incorrect_guesses_in_round = 0 # Reset for "Perfect Game" achievement
-        self.start_game_timer() # Start timer for the new game
+        self.apply_settings()
+        self.incorrectGuessesInRound = 0
+        self.guessedLetters = set()
+        self.remainingAttempts = self.settings.get("strikes_limit", 6)
 
-        # Load words and their descriptions, now picking a random category each time
-        self.word_data_dict, self.current_dlc_theme, self.current_dlc_description = self.load_words()
-        
-        # Get the list of completed words for the current category, or an empty list if none exist
-        completed_in_current_category = self.completed_words.get(self.current_dlc_theme, [])
-        # Filter the word list based on words not yet completed in this category
-        available_words = [word for word in self.word_data_dict.keys() if word not in completed_in_current_category]
+        ## Load Words from Enabled Categories
+        self.wordDataDict, self.currentDLCTheme, self.currentDLCDescription = self.load_words()
+        completedCurrentCategory = self.completedWords.get(self.currentDLCTheme, [])
+        availableWords = [word for word in self.wordDataDict.keys() if word not in completedCurrentCategory]
 
-        if available_words:
-            self.secret_word_key = random.choice(available_words)
-            self.secret_word = self.secret_word_key.upper()
+        if availableWords:
+            self.secretWordDisplay = random.choice(availableWords)
+            self.secretWord = self.secretWordDisplay.upper()
         else:
-            self.secret_word = "HANGMAN" # Fallback if all words in chosen categories are completed
-            self.current_dlc_theme = "Default Words"
-            self.current_dlc_description = "A general set of words (all words completed in enabled categories)."
+            self.secretWord = "HANGMAN"
+            self.currentDLCTheme = "Default Words"
+            self.currentDLCDescription = "A general set of words (all words completed in enabled categories)."
             QMessageBox.information(self, "No New Words", "All words in the enabled categories have been completed! Playing with a default word. You can reset game history in settings to play them again.")
 
-
-        self.guessed_letters = set()
-        self.remaining_attempts = self.settings.get("strikes_limit", 6) # Reset remaining attempts
-
-        # Automatically reveal characters in the secret word
-        for char in self.secret_word:
+        ## Automatically Reveal These Characters
+        for char in self.secretWord:
             if char == ' ':
-                self.guessed_letters.add(' ')
+                self.guessedLetters.add(' ')
             if char == ',':
-                self.guessed_letters.add(',')
+                self.guessedLetters.add(',')
 
-        self.word_label.setText(self.display_word())
-        self.update_status_label() # Update status label based on current game state
-        self.dlc_theme_label.setText(self.current_dlc_theme) # Update DLC theme label
+        self.wordLabel.setText(self.display_word())
+        self.update_status_label()
+        self.DLCThemeLabel.setText(self.currentDLCTheme)
 
-        self.guess_input.setDisabled(False)
-        self.guess_button.setDisabled(False)
-        self.give_up_button.setDisabled(False) # Re-enable give up button for new game
-        self.restart_button.hide()
+        self.guessInput.setDisabled(False)
+        self.guessButton.setDisabled(False)
+        self.giveUpButton.setDisabled(False)
+        self.restartButton.hide()
 
-        # Re-enable all keyboard buttons
-        for button in self.keyboard_frame.findChildren(QPushButton):
+        ## Enable Keyboard Buttons
+        for button in self.keyboardFrame.findChildren(QPushButton):
             button.setDisabled(False)
         
-        self.update_hangman_image() # Reset image for new game
-
-    def start_game_timer(self):
-        self.last_game_start_time = datetime.now()
-
-    def stop_game_timer(self):
-        if self.last_game_start_time:
-            duration = (datetime.now() - self.last_game_start_time).total_seconds()
-            self.last_game_start_time = None # Reset
-            return duration
-        return None
+        self.update_hangman_image()
 
     def check_and_unlock_achievement(self, unlockName=None):
-        # The category name is the achievement's unique ID
-        for achievement_id, achievements_list in self.all_achievements.items():
-            # Your structure seems to have a list of achievements per category, even if it's just one.
-            # Let's assume for this specific case the list has only one item.
-            if achievements_list:
-                achievement = achievements_list[0]
+        ## Check Every Achievement
+        for achievementId, achievementsList in self.allAchievements.items():
+            if achievementsList:
+                achievement = achievementsList[0]
             
-                # Skip if the achievement is already unlocked
-                if achievement_id in self.unlocked_data.get("unlockedAchievements", []):
+                ## Skip Unlocked Achievements
+                if achievementId in self.unlockedData.get("unlockedAchievements", []):
                     continue
 
                 unlocked = False
                 tracker = achievement.get("AchievementProgressTracker")
 
-                if achievement_id == unlockName and unlockName != None:
+                if achievementId == unlockName and unlockName != None:
                     unlocked = True
 
-                # Handle achievements with a progress tracker (threshold-based)
+                # Handle Tracker Achievements
                 elif isinstance(tracker, int):
-                    current_progress = self.unlocked_data["unlockedAchievementsProgress"].get(achievement_id, 0)
-                    if current_progress >= tracker:
+                    currentProgress = self.unlockedData["unlockedAchievementsProgress"].get(achievementId, 0)
+                    if currentProgress >= tracker:
                         unlocked = True
 
                 if unlocked:
-                    self.unlock_achievement(achievement_id, achievement.get("Name"), achievement.get("Description"))
+                    self.unlock_achievement(achievementId, achievement.get("Name"), achievement.get("Description"))
     
-    def unlock_achievement(self, achievement_id, title, description):
-        if achievement_id not in self.unlocked_data.get("unlockedAchievements", []):
-            self.unlocked_data["unlockedAchievements"].append(achievement_id)
-            self.unlocked_data["unlockTimes"][achievement_id] = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")
-            save_json(self.unlocked_achievements_path, self.unlocked_data)
+    def unlock_achievement(self, achievementId, title, description):
+        if achievementId not in self.unlockedData.get("unlockedAchievements", []):
+            self.unlockedData["unlockedAchievements"].append(achievementId)
+            self.unlockedData["unlockTimes"][achievementId] = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")
+            save_json(self.unlockedAchievementsPath, self.unlockedData)
         
-            self.show_achievement_popup(achievement_id, title, description)
+            self.show_achievement_popup(achievementId, title, description)
 
-    def show_achievement_popup(self, achievement_id, title, description):
-        icon_path = resource_path(os.path.join("Achievement Icons", achievement_id + ".png"))
-        popup_html = f"""
+    def show_achievement_popup(self, achievementId, title, description):
+        iconPath = resource_path(os.path.join("Achievement Icons", achievementId + ".png"))
+        popupHtml = f"""
         <div style="display: flex; align-items: flex-start;">
-            <img src="{icon_path}" width="48" height="48" style="margin-right: 10px;">
+            <img src="{iconPath}" width="48" height="48" style="margin-right: 10px;">
             <div>
                 <div style="font-weight: bold; font-size: 14pt;">{title}</div>
                 <div style="font-size: 10pt; color: #555;">{description}</div>
             </div>
         </div>
         """
-        self.achievement_popup.setText(popup_html)
-        self.achievement_popup.adjustSize()
+        self.achievementPopup.setText(popupHtml)
+        self.achievementPopup.adjustSize()
 
-        # Position bottom right
-        self.achievement_popup.move(
-            self.width() - self.achievement_popup.width() - 20,
-            self.height() - self.achievement_popup.height() - 20
+        ## Position bottom right
+        self.achievementPopup.move(
+            self.width() - self.achievementPopup.width() - 20,
+            self.height() - self.achievementPopup.height() - 20
         )
-        self.achievement_popup.show()
-        self.achievement_timer.start(5000)
+        self.achievementPopup.show()
+        self.achievementTimer.start(5000)
 
     def hide_achievement_popup(self):
-        self.achievement_popup.hide()
-        self.achievement_timer.stop()
+        self.achievementPopup.hide()
+        self.achievementTimer.stop()
 
     def resizeEvent(self, event):
-        self.background_image.setGeometry(0, 0, self.width(), self.height())
-        # Re-position achievement popup on resize
-        if not self.achievement_popup.isHidden():
-            self.achievement_popup.move(
-                self.width() - self.achievement_popup.width() - 20,
-                self.height() - self.achievement_popup.height() - 20
+        self.backgroundImage.setGeometry(0, 0, self.width(), self.height())
+        if not self.achievementPopup.isHidden():
+            self.achievementPopup.move(
+                self.width() - self.achievementPopup.width() - 20,
+                self.height() - self.achievementPopup.height() - 20
             )
         super().resizeEvent(event)

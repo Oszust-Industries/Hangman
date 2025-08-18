@@ -26,14 +26,14 @@ class SettingsWindow(QDialog):
         self.setWindowTitle("Settings")
         self.setGeometry(100, 100, 400, 550)
 
-        ## Initialize categories dictionary 
+        ## Initialize Categories Dictionary 
         self.categories = {}
         self.load_categories_from_dlc()
 
-        ## Main layout
+        ## Main Layout
         layout = QVBoxLayout(self)
 
-        ## Scrollable area setup
+        ## Scrollable Area Setup
         scrollArea = QScrollArea()
         scrollArea.setWidgetResizable(True)
         scrollContent = QWidget()
@@ -106,7 +106,7 @@ class SettingsWindow(QDialog):
         self.resetHistoryButton = QPushButton("Reset Game History")
         self.resetSettingsButton = QPushButton("Reset All Settings")
 
-        ## Connect reset buttons to their functions
+        ## Connect Reset Buttons
         self.resetAchievementsButton.clicked.connect(self.reset_achievements)
         self.resetHistoryButton.clicked.connect(self.reset_history)
         self.resetSettingsButton.clicked.connect(self.reset_settings)
@@ -117,11 +117,11 @@ class SettingsWindow(QDialog):
         dataBox.setLayout(dataLayout)
         scrollLayout.addWidget(dataBox)
 
-        ## Add scroll content to scroll area
+        ## Add Scroll Content to Scroll Area
         scrollArea.setWidget(scrollContent)
         layout.addWidget(scrollArea)
 
-        ## Save & Close button
+        ## Save & Close Button
         self.saveButton = QPushButton("Save and Close")
         self.saveButton.clicked.connect(self.save_and_close)
         layout.addWidget(self.saveButton)
@@ -152,7 +152,7 @@ class SettingsWindow(QDialog):
                 #self.fontSizeCombo.setCurrentText(settings.get('font_size', "Medium"))
                 #self.highContrastCheckbox.setChecked(settings.get('enable_high_contrast_mode', False))
 
-                ## Load category settings for dynamically created checkboxes
+                ## Load Category Checkboxes
                 loaded_categories_state = settings.get('categories', {})
                 for category_name, checkbox in self.categories.items():
                     checkbox.setChecked(loaded_categories_state.get(category_name, True))
@@ -196,10 +196,10 @@ class SettingsWindow(QDialog):
                                      "Are you sure you want to reset all achievements? This cannot be undone.",
                                      QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
         if reply == QMessageBox.StandardButton.Yes:
-            ## Reset the achievement data in the JSON file
+            ## Reset Achievement Data
             default_unlocked_data = {"unlockedAchievements": [], "unlockedAchievementsProgress": {}, "unlockTimes": {}, "win_count": 0, "unique_words_guessed": []}
             try:
-                ## Ensure the directory exists before saving
+                ## Ensure Directory Exists
                 os.makedirs(os.path.dirname(unlockedAchievementsFile), exist_ok=True)
                 with open(unlockedAchievementsFile, 'w', encoding='utf-8') as f:
                     json.dump(default_unlocked_data, f, indent=4)
@@ -215,7 +215,7 @@ class SettingsWindow(QDialog):
                                      QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
         if reply == QMessageBox.StandardButton.Yes:
             try:
-                ## Clear the completed words file
+                ## Clear Completed Words
                 os.makedirs(os.path.dirname(completedWordsFile), exist_ok=True)
                 with open(completedWordsFile, 'w', encoding='utf-8') as f:
                     json.dump({"completedWords": []}, f, indent=4)
@@ -230,7 +230,7 @@ class SettingsWindow(QDialog):
                                      "Are you sure you want to reset the settings?",
                                      QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
         if reply == QMessageBox.StandardButton.Yes:
-            ## Reset default values for general settings
+            ## Reset Settings to Defaults
             self.keyboardCheckbox.setChecked(True)
             self.hintsCombo.setCurrentIndex(0) # Auto
             self.guessCombo.setCurrentIndex(1) # Off

@@ -1,22 +1,23 @@
 ## Hangman Game - Oszust Industries
-## Created on: 2-11-25 - Last update: 8-17-25
+## Created on: 2-11-25 - Last update: 8-18-25
 softwareVersion = "v1.0.0"
 systemName, systemBuild = "Hangman", "dev"
-import json, os, sys
-from PyQt6 import QtGui
+
 from PyQt6.QtWidgets import QApplication, QStackedWidget
+from PyQt6 import QtGui
 import MainMenu, Hangman, Achievements, Settings
+import json, os, sys
 
-def resource_path(relative_path):
+def resource_path(relativePath):
     try:
-        base_path = sys._MEIPASS
+        basePath = sys._MEIPASS
     except Exception:
-        base_path = os.path.abspath(".")
+        basePath = os.path.abspath(".")
 
-    return os.path.join(base_path, relative_path)
+    return os.path.join(basePath, relativePath)
 
 class GameSetup:
-    def fileSetup():
+    def file_setup():
         basePath = os.path.join(os.getenv('APPDATA'), 'Oszust Industries')
         hangmanPath = os.path.join(basePath, 'Hangman Game')
         ## Create Appdata Folders
@@ -33,10 +34,10 @@ class MainApp(QStackedWidget):
         self.init_ui()
 
     def init_ui(self):
-        self.MainMenuWindow = MainMenu.MainMenu(self.switchWindow)
-        self.GameWindow = Hangman.GameWindow(self.switchWindow)
-        self.SettingsWindow = Settings.SettingsWindow(self.switchWindow)
-        self.AchievementsWindow = Achievements.AchievementsWindow(self.switchWindow)
+        self.MainMenuWindow = MainMenu.MainMenu(self.switch_window)
+        self.GameWindow = Hangman.GameWindow(self.switch_window)
+        self.SettingsWindow = Settings.SettingsWindow(self.switch_window)
+        self.AchievementsWindow = Achievements.AchievementsWindow(self.switch_window)
 
         self.addWidget(self.MainMenuWindow)
         self.addWidget(self.GameWindow)
@@ -49,7 +50,7 @@ class MainApp(QStackedWidget):
         self.setMinimumSize(800, 500)
         self.setCurrentWidget(self.MainMenuWindow)
 
-    def switchWindow(self, windowName, restart=False):
+    def switch_window(self, windowName, restart=False):
         windows = {
             "MainMenuWindow": self.MainMenuWindow,
             "GameWindow": self.GameWindow,
@@ -64,7 +65,7 @@ class MainApp(QStackedWidget):
             self.setCurrentWidget(windows[windowName])
 
 if __name__ == "__main__":
-    GameSetup.fileSetup()
+    GameSetup.file_setup()
 
     game = QApplication(sys.argv)
     hangmanGame = MainApp()

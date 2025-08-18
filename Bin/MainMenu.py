@@ -3,44 +3,44 @@ from PyQt6.QtGui import QPixmap
 from PyQt6.QtCore import QRect, Qt
 import os, sys
 
-def resource_path(relative_path):
+def resource_path(relativePath):
     try:
-        base_path = sys._MEIPASS
+        basePath = sys._MEIPASS
     except Exception:
-        base_path = os.path.abspath(".")
+        basePath = os.path.abspath(".")
 
-    return os.path.join(base_path, relative_path)
+    return os.path.join(basePath, relativePath)
 
 class MainMenu(QWidget):
-    def __init__(self, switch_window):
+    def __init__(self, switchWindow):
         super().__init__()
-        self.switch_window = switch_window  
+        self.switchWindow = switchWindow  
 
-        # Background Image
+        ## Background Image
         self.backgroundImage = QLabel(self)
         self.backgroundImage.setPixmap(QPixmap(resource_path(os.path.join("Data", "woodBackground.jpg"))))
         self.backgroundImage.setScaledContents(True)
         self.backgroundImage.setGeometry(0, 0, self.width(), self.height())
 
-        # Create Overylay
+        ## Create Overylay
         self.overlay = QWidget(self)
         self.overlay.setGeometry(QRect(0, 0, self.width(), self.height()))
         self.overlayLayout = QVBoxLayout(self.overlay)
         self.overlay.setLayout(self.overlayLayout)
 
-        # Title Label
+        ## Title Label
         titleLayout = QLabel("Hangman Game", self.overlay)
         titleLayout.setStyleSheet("color: white; font-size: 48px;")
         titleLayout.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.overlayLayout.addWidget(titleLayout)
 
-        # Hangman Image
+        ## Hangman Image
         hangmanImage = QLabel(self.overlay)
         hangmanImage.setPixmap(QPixmap(resource_path(os.path.join("Data", "hangmanImage.jpg"))))
         hangmanImage.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.overlayLayout.addWidget(hangmanImage)
 
-        # Button Style
+        ## Button Style
         buttonStyle = """
             QPushButton {
                 background-color: #444;
@@ -56,25 +56,25 @@ class MainMenu(QWidget):
             }
         """
 
-        # Menu Buttons
+        ## Menu Buttons
         playButton = QPushButton("Play Game", self.overlay)
         playButton.setStyleSheet(buttonStyle)
-        playButton.clicked.connect(self.playGame)
+        playButton.clicked.connect(self.play_game)
         self.overlayLayout.addWidget(playButton)
 
         #createWordButton = QPushButton("Create Words", self.overlay)
         #createWordButton.setStyleSheet(buttonStyle)
-        #createWordButton.clicked.connect(lambda: self.switch_window("CreateWordsWindow"))
+        #createWordButton.clicked.connect(lambda: self.switchWindow("CreateWordsWindow"))
         #self.overlayLayout.addWidget(createWordButton)
 
         achievementsButton = QPushButton("Achievements", self.overlay)
         achievementsButton.setStyleSheet(buttonStyle)
-        achievementsButton.clicked.connect(lambda: self.switch_window("AchievementsWindow", restart=True))
+        achievementsButton.clicked.connect(lambda: self.switchWindow("AchievementsWindow", restart=True))
         self.overlayLayout.addWidget(achievementsButton)
 
         settingsButton = QPushButton("Settings", self.overlay)
         settingsButton.setStyleSheet(buttonStyle)
-        settingsButton.clicked.connect(lambda: self.switch_window("SettingsWindow"))
+        settingsButton.clicked.connect(lambda: self.switchWindow("SettingsWindow"))
         self.overlayLayout.addWidget(settingsButton)
 
         quitButton = QPushButton("Quit", self.overlay)
@@ -84,8 +84,8 @@ class MainMenu(QWidget):
 
         self.overlay.raise_()
 
-    def playGame(self):
-        self.switch_window("GameWindow", restart=True)
+    def play_game(self):
+        self.switchWindow("GameWindow", restart=True)
 
     def resizeEvent(self, event):
         self.backgroundImage.setGeometry(0, 0, self.width(), self.height())

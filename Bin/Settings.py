@@ -1,21 +1,21 @@
-import json, os, sys
-from PyQt6.QtWidgets import QDialog, QVBoxLayout, QCheckBox, QSpinBox, QComboBox, QPushButton, QScrollArea, QWidget, QGroupBox, QFormLayout, QHBoxLayout, QLabel, QMessageBox
+from PyQt6.QtWidgets import QDialog, QVBoxLayout, QCheckBox, QSpinBox, QComboBox, QPushButton, QScrollArea, QWidget, QGroupBox, QFormLayout, QMessageBox
 from PyQt6.QtCore import Qt
+import json, os, sys
 
-def resource_path(relative_path):
+def resource_path(relativePath):
     try:
-        base_path = sys._MEIPASS
+        basePath = sys._MEIPASS
     except Exception:
-        base_path = os.path.abspath(".")
+        basePath = os.path.abspath(".")
 
-    return os.path.join(base_path, relative_path)
+    return os.path.join(basePath, relativePath)
 
 basePath = os.path.join(os.getenv('APPDATA'), 'Oszust Industries')
 hangmanPath = os.path.join(basePath, 'Hangman Game')
-settings_file = os.path.join(hangmanPath, 'settings.json')
-unlocked_achievements_file = os.path.join(hangmanPath, 'unlockedAchievements.json')
-completed_words_file = os.path.join(hangmanPath, 'completedWords.json')
-DLC_DIR = resource_path("DLC")
+settingsFile = os.path.join(hangmanPath, 'settings.json')
+unlockedAchievementsFile = os.path.join(hangmanPath, 'unlockedAchievements.json')
+completedWordsFile = os.path.join(hangmanPath, 'completedWords.json')
+DLCFolder = resource_path("DLC")
 
 class SettingsWindow(QDialog):
     def __init__(self, switchWindowCallback):
@@ -26,41 +26,41 @@ class SettingsWindow(QDialog):
         self.setWindowTitle("Settings")
         self.setGeometry(100, 100, 400, 550)
 
-        # Initialize categories dictionary 
+        ## Initialize categories dictionary 
         self.categories = {}
         self.load_categories_from_dlc()
 
-        # Main layout
+        ## Main layout
         layout = QVBoxLayout(self)
 
-        # Scrollable area setup
+        ## Scrollable area setup
         scrollArea = QScrollArea()
         scrollArea.setWidgetResizable(True)
         scrollContent = QWidget()
         scrollLayout = QVBoxLayout(scrollContent)
         scrollLayout.setAlignment(Qt.AlignmentFlag.AlignTop)
 
-        ### Gameplay Settings
+        ## Gameplay Settings
         gameplayBox = QGroupBox("Gameplay Settings")
         gameplayLayout = QFormLayout()
 
-        # On-Screen Keyboard
+        ## On-Screen Keyboard
         self.keyboardCheckbox = QCheckBox("Enable On-Screen Keyboard")
         self.keyboardCheckbox.setChecked(True)
         gameplayLayout.addRow(self.keyboardCheckbox)
 
-        # Hints Mode (Auto, Always, Never)
+        ## Hints Mode (Auto, Always, Never)
         self.hintsCombo = QComboBox()
         self.hintsCombo.addItems(["Auto", "Always", "Never"])
         gameplayLayout.addRow("Hints Mode:", self.hintsCombo)
 
-        # Full Word Guessing (On, Off)
+        ## Full Word Guessing (On, Off)
         self.guessCombo = QComboBox()
         self.guessCombo.addItems(["On", "Off"])
         self.guessCombo.setCurrentIndex(1)
         gameplayLayout.addRow("Full Word Guessing:", self.guessCombo)
 
-        # Strikes Limit
+        ## Strikes Limit
         self.strikesSpinbox = QSpinBox()
         self.strikesSpinbox.setRange(3, 6)
         self.strikesSpinbox.setValue(6)
@@ -69,7 +69,7 @@ class SettingsWindow(QDialog):
         gameplayBox.setLayout(gameplayLayout)
         scrollLayout.addWidget(gameplayBox)
 
-        ### Audio Settings
+        ## Audio Settings
         #audioBox = QGroupBox("Audio Settings")
         #audioLayout = QFormLayout()
         #self.soundCheckbox = QCheckBox("Enable Sound Effects")
@@ -77,7 +77,7 @@ class SettingsWindow(QDialog):
         #audioBox.setLayout(audioLayout)
         #scrollLayout.addWidget(audioBox)
 
-        ### Accessibility Settings
+        ## Accessibility Settings
         #accessibilityBox = QGroupBox("Accessibility Settings")
         #accessibilityLayout = QFormLayout()
         #self.fontSizeCombo = QComboBox()
@@ -89,7 +89,7 @@ class SettingsWindow(QDialog):
         #accessibilityBox.setLayout(accessibilityLayout)
         #scrollLayout.addWidget(accessibilityBox)
 
-        ### Categories & DLC Selection
+        ## Categories & DLC Selection
         categoryBox = QGroupBox("Categories & DLC")
         categoryLayout = QVBoxLayout()
         for cb in self.categories.values():
@@ -99,17 +99,17 @@ class SettingsWindow(QDialog):
         categoryBox.setLayout(categoryLayout)
         scrollLayout.addWidget(categoryBox)
 
-        ### Data Management
+        ## Data Management
         dataBox = QGroupBox("Data Management")
         dataLayout = QVBoxLayout()
         self.resetAchievementsButton = QPushButton("Reset Achievements")
         self.resetHistoryButton = QPushButton("Reset Game History")
         self.resetSettingsButton = QPushButton("Reset All Settings")
 
-        # Connect reset buttons to their functions
-        self.resetAchievementsButton.clicked.connect(self.resetAchievements)
-        self.resetHistoryButton.clicked.connect(self.resetHistory)
-        self.resetSettingsButton.clicked.connect(self.resetSettings)
+        ## Connect reset buttons to their functions
+        self.resetAchievementsButton.clicked.connect(self.reset_achievements)
+        self.resetHistoryButton.clicked.connect(self.reset_history)
+        self.resetSettingsButton.clicked.connect(self.reset_settings)
 
         dataLayout.addWidget(self.resetAchievementsButton)
         dataLayout.addWidget(self.resetHistoryButton)
@@ -117,31 +117,31 @@ class SettingsWindow(QDialog):
         dataBox.setLayout(dataLayout)
         scrollLayout.addWidget(dataBox)
 
-        # Add scroll content to scroll area
+        ## Add scroll content to scroll area
         scrollArea.setWidget(scrollContent)
         layout.addWidget(scrollArea)
 
-        # Save & Close button
+        ## Save & Close button
         self.saveButton = QPushButton("Save and Close")
-        self.saveButton.clicked.connect(self.saveAndClose)
+        self.saveButton.clicked.connect(self.save_and_close)
         layout.addWidget(self.saveButton)
 
         self.load_settings()
 
     def load_categories_from_dlc(self):
-        os.makedirs(DLC_DIR, exist_ok=True)
+        os.makedirs(DLCFolder, exist_ok=True)
 
-        for filename in os.listdir(DLC_DIR):
+        for filename in os.listdir(DLCFolder):
             if filename.endswith(".json"):
-                category_name = os.path.splitext(filename)[0]
-                checkbox = QCheckBox(category_name)
+                categoryName = os.path.splitext(filename)[0]
+                checkbox = QCheckBox(categoryName)
                 checkbox.setChecked(True)
-                self.categories[category_name] = checkbox
+                self.categories[categoryName] = checkbox
 
     def load_settings(self):
-        if os.path.exists(settings_file):
+        if os.path.exists(settingsFile):
             try:
-                with open(settings_file, 'r') as f:
+                with open(settingsFile, 'r') as f:
                     settings = json.load(f)
 
                 self.keyboardCheckbox.setChecked(settings.get('enable_on_screen_keyboard', True))
@@ -152,14 +152,14 @@ class SettingsWindow(QDialog):
                 #self.fontSizeCombo.setCurrentText(settings.get('font_size', "Medium"))
                 #self.highContrastCheckbox.setChecked(settings.get('enable_high_contrast_mode', False))
 
-                # Load category settings for dynamically created checkboxes
+                ## Load category settings for dynamically created checkboxes
                 loaded_categories_state = settings.get('categories', {})
                 for category_name, checkbox in self.categories.items():
                     checkbox.setChecked(loaded_categories_state.get(category_name, True))
 
                 print("Settings loaded successfully.")
             except json.JSONDecodeError:
-                print(f"Error decoding JSON from {settings_file}. File might be corrupted.")
+                print(f"Error decoding JSON from {settingsFile}. File might be corrupted.")
             except Exception as e:
                 print(f"An error occurred while loading settings: {e}")
         else:
@@ -179,32 +179,29 @@ class SettingsWindow(QDialog):
             'categories': {name: cb.isChecked() for name, cb in self.categories.items()}
         }
 
-        # Ensure the directory exists
-        os.makedirs(hangmanPath, exist_ok=True)
-
         try:
-            with open(settings_file, 'w') as f:
+            with open(settingsFile, 'w') as f:
                 json.dump(settings, f, indent=4)
             print("Settings saved successfully.")
         except Exception as e:
             print(f"An error occurred while saving settings: {e}")
 
-    def saveAndClose(self):
+    def save_and_close(self):
         self.save_settings()
         self.switchWindow("MainMenuWindow")
         self.close()
 
-    def resetAchievements(self):
+    def reset_achievements(self):
         reply = QMessageBox.question(self, "Reset Achievements",
                                      "Are you sure you want to reset all achievements? This cannot be undone.",
                                      QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
         if reply == QMessageBox.StandardButton.Yes:
-            # Reset the achievement data in the JSON file
+            ## Reset the achievement data in the JSON file
             default_unlocked_data = {"unlockedAchievements": [], "unlockedAchievementsProgress": {}, "unlockTimes": {}, "win_count": 0, "unique_words_guessed": []}
             try:
-                # Ensure the directory exists before saving
-                os.makedirs(os.path.dirname(unlocked_achievements_file), exist_ok=True)
-                with open(unlocked_achievements_file, 'w', encoding='utf-8') as f:
+                ## Ensure the directory exists before saving
+                os.makedirs(os.path.dirname(unlockedAchievementsFile), exist_ok=True)
+                with open(unlockedAchievementsFile, 'w', encoding='utf-8') as f:
                     json.dump(default_unlocked_data, f, indent=4)
                 QMessageBox.information(self, "Achievements Reset", "All achievement data has been reset.")
                 print("Achievements Reset Successfully.")
@@ -212,15 +209,15 @@ class SettingsWindow(QDialog):
                 QMessageBox.critical(self, "Error", f"Failed to reset achievements: {e}")
                 print(f"Error resetting achievements: {e}")
 
-    def resetHistory(self):
+    def reset_history(self):
         reply = QMessageBox.question(self, "Reset Game History",
                                      "Are you sure you want to reset your game history? This will allow you to play previously completed words again.",
                                      QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
         if reply == QMessageBox.StandardButton.Yes:
             try:
-                # Clear the completed words file
-                os.makedirs(os.path.dirname(completed_words_file), exist_ok=True)
-                with open(completed_words_file, 'w', encoding='utf-8') as f:
+                ## Clear the completed words file
+                os.makedirs(os.path.dirname(completedWordsFile), exist_ok=True)
+                with open(completedWordsFile, 'w', encoding='utf-8') as f:
                     json.dump({"completedWords": []}, f, indent=4)
                 QMessageBox.information(self, "Game History Reset", "Your game history (completed words) has been reset.")
                 print("Game History (Completed Words) Reset Successfully.")
@@ -228,17 +225,21 @@ class SettingsWindow(QDialog):
                 QMessageBox.critical(self, "Error", f"Failed to reset game history: {e}")
                 print(f"Error resetting game history: {e}")
 
-    def resetSettings(self):
-        # Reset default values for general settings
-        self.keyboardCheckbox.setChecked(True)
-        self.hintsCombo.setCurrentIndex(0) # Auto
-        self.guessCombo.setCurrentIndex(1) # Off
-        self.strikesSpinbox.setValue(6)
-        #self.soundCheckbox.setChecked(False)
-        #self.fontSizeCombo.setCurrentIndex(1) # Medium
-        #self.highContrastCheckbox.setChecked(False)
+    def reset_settings(self):
+        reply = QMessageBox.question(self, "Reset Settings",
+                                     "Are you sure you want to reset the settings?",
+                                     QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
+        if reply == QMessageBox.StandardButton.Yes:
+            ## Reset default values for general settings
+            self.keyboardCheckbox.setChecked(True)
+            self.hintsCombo.setCurrentIndex(0) # Auto
+            self.guessCombo.setCurrentIndex(1) # Off
+            self.strikesSpinbox.setValue(6)
+            #self.soundCheckbox.setChecked(False)
+            #self.fontSizeCombo.setCurrentIndex(1) # Medium
+            #self.highContrastCheckbox.setChecked(False)
 
-        for cb in self.categories.values():
-            cb.setChecked(True)
-        print("Settings Reset to Defaults")
-        self.save_settings()
+            for cb in self.categories.values():
+                cb.setChecked(True)
+            print("Settings Reset to Defaults")
+            self.save_settings()

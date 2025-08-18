@@ -55,6 +55,7 @@ class GameWindow(QWidget):
 
         # Game state variables
         self.secret_word = ""
+        self.secret_word_key = ""
         self.guessed_letters = set()
         self.remaining_attempts = 0
         self.current_dlc_theme = "Base Game" # Stores the name of the current DLC/Category
@@ -395,6 +396,8 @@ class GameWindow(QWidget):
         if not guess:
             return # Do nothing if input is empty
 
+        self.check_and_unlock_achievement("Achievement_Welcome")
+
         full_word_guessing_mode = self.settings.get("full_word_guessing", "Off") # Default to Off
 
         if len(guess) > 1: # Full word guess
@@ -404,11 +407,15 @@ class GameWindow(QWidget):
             elif not guess.isalpha():
                 return
             if guess == self.secret_word:
+                self.check_and_unlock_achievement("Achievement_Solve_Correct")
+                if len(self.guessed_letters) == 0:
+                    self.check_and_unlock_achievement("Achievement_Solve_Correct_No_Help")
                 for letter in self.secret_word: # Reveal all letters
                     self.guessed_letters.add(letter)
                 self.word_label.setText(self.display_word())
                 self.end_game(win=True)
             else:
+                self.check_and_unlock_achievement("Achievement_Solve_Wrong")
                 self.remaining_attempts -= 1
                 self.incorrect_guesses_in_round += 1
                 self.update_status_label()
@@ -455,14 +462,14 @@ class GameWindow(QWidget):
         hints_mode = self.settings.get("hints_mode", "Auto")
 
         if hints_mode == "Always":
-            self.status_label.setText(self.word_data_dict.get(self.to_pascal_case(self.secret_word_key), "Guess the hidden word!"))
+            self.status_label.setText(self.word_data_dict.get(self.secret_word_key, "Guess the hidden word!"))
         elif hints_mode == "Auto":
             half_strikes_limit = self.initial_strikes_limit // 2
             if self.remaining_attempts <= half_strikes_limit:
-                self.status_label.setText(self.word_data_dict.get(self.to_pascal_case(self.secret_word_key), "Guess the hidden word!"))
+                self.status_label.setText(self.word_data_dict.get(self.secret_word_key, "Guess the hidden word!"))
             else:
                 self.status_label.setText(f"Remaining Attempts: {self.remaining_attempts}")
-        else: # hints_mode == "Never"
+        else:
             self.status_label.setText(f"Remaining Attempts: {self.remaining_attempts}")
 
     def update_hangman_image(self):
@@ -506,14 +513,27 @@ class GameWindow(QWidget):
 
 
     def open_menu(self):
+        self.check_and_unlock_achievement("Achievement_Stop_Playing")
+        if len(self.guessed_letters) > 0:
+            self.check_and_unlock_achievement("Achievement_Terminate")
         self.switch_window("MainMenuWindow")
 
     def end_game(self, win):
-        game_duration_seconds = self.stop_game_timer()
+
+        total_completed_words = self.unlocked_data["unlockedAchievementsProgress"].get("Achievement_All_Topics", 0)
+        self.unlocked_data["unlockedAchievementsProgress"]["Achievement_All_Topics"] = (total_completed_words + 1)
 
         if win:
             QMessageBox.information(self, "You Win!", f"Congratulations! The word was '{self.secret_word}'.")
             
+            self.check_and_unlock_achievement("Achievement_Winner")
+
+            if self.remaining_attempts == 1:
+                self.check_and_unlock_achievement("Achievement_Close_Call")
+
+            if self.settings.get("hints_mode", "Auto") == "Never":
+                self.check_and_unlock_achievement("Achievement_Hard_Mode")
+
             # Update win count and save completed word
 
             if "unique_words_guessed" not in self.unlocked_data:
@@ -562,6 +582,7 @@ class GameWindow(QWidget):
                         achievementThemeName = "Achievement_All_Cities"
 
                 current_progress = self.unlocked_data["unlockedAchievementsProgress"].get(achievementThemeName, 0)
+                print(f"Current progress for {achievementThemeName}: {current_progress}, New completed count: {new_completed_count}")
                 
                 # Only update the progress if the new count is higher
                 if new_completed_count > current_progress:
@@ -664,52 +685,13 @@ class GameWindow(QWidget):
                     unlocked = True
 
                 # Handle achievements with a progress tracker (threshold-based)
-                elif isinstance(tracker, dict):
+                elif isinstance(tracker, int):
                     current_progress = self.unlocked_data["unlockedAchievementsProgress"].get(achievement_id, 0)
-                    threshold = tracker.get("TargetValue", 0)
-                    if current_progress >= threshold:
+                    if current_progress >= tracker:
                         unlocked = True
-
-                # Handle achievements with a specific, direct condition
-                else:
-                    # Use the achievement_id to check for the specific condition
-                    if achievement_id == "Achievement_Winner":
-                        # This checks if the win count has reached the threshold to unlock.
-                        # You'll need to make sure 'win_count' is incremented elsewhere in your code.
-                        if self.unlocked_data.get("win_count", 0) >= 1:
-                            unlocked = True
-                
-                    # You can add other conditions here for different achievement IDs.
-                    elif achievement_id == "Achievement_Keep_Playing":
-                        if self.unlocked_data.get("game_count", 0) >= 2:
-                            unlocked = True
 
                 if unlocked:
                     self.unlock_achievement(achievement_id, achievement.get("Name"), achievement.get("Description"))
-
-    def update_achievement_progress(self, achievement_id, value):
-        """
-        Updates the progress for a specific achievement and saves the data.
-        
-        Args:
-            achievement_id (str): The ID of the achievement to update.
-            value (int): The amount to add to the current progress.
-        """
-        # Ensure the progress dictionary exists
-        if "unlockedAchievementsProgress" not in self.unlocked_data:
-            self.unlocked_data["unlockedAchievementsProgress"] = {}
-        
-        # Get the current progress, defaulting to 0 if it doesn't exist
-        current_progress = self.unlocked_data["unlockedAchievementsProgress"].get(achievement_id, 0)
-        
-        # Update the progress by adding the new value
-        self.unlocked_data["unlockedAchievementsProgress"][achievement_id] = current_progress + value
-        
-        # Save the updated data to the achievements file
-        save_json(self.unlocked_achievements_path, self.unlocked_data)
-        
-        # Check if any achievements have been unlocked with the new progress
-        self.check_and_unlock_achievement()
     
     def unlock_achievement(self, achievement_id, title, description):
         if achievement_id not in self.unlocked_data.get("unlockedAchievements", []):

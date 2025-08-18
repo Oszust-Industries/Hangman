@@ -137,7 +137,7 @@
             "Name": "100% Completion",
             "Description": "Play all the game topics.",
             "Level": "Silver",
-            "AchievementProgressTracker": null,
+            "AchievementProgressTracker": 405,
             "DLC": "Base",
             "Hidden": false
         }
@@ -169,7 +169,7 @@
             "Name": "A+ Score",
             "Description": "Get every question in Hangman correct.",
             "Level": "Gold",
-            "AchievementProgressTracker": null,
+            "AchievementProgressTracker": 405,
             "DLC": "Base",
             "Hidden": false
         }

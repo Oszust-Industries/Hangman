@@ -10,11 +10,18 @@ def resource_path(relativePath):
 
     return os.path.join(basePath, relativePath)
 
-basePath = os.path.join(os.getenv('APPDATA'), 'Oszust Industries')
-hangmanPath = os.path.join(basePath, 'Hangman Game')
-settingsFile = os.path.join(hangmanPath, 'settings.json')
-unlockedAchievementsFile = os.path.join(hangmanPath, 'unlockedAchievements.json')
-completedWordsFile = os.path.join(hangmanPath, 'completedWords.json')
+def get_app_data_path():
+    if sys.platform == 'win32': ## Windows
+        return os.path.join(os.getenv('APPDATA'), 'Oszust Industries', 'Hangman Game')
+    elif sys.platform == 'darwin': ## macOS
+        return os.path.join(os.path.expanduser('~'), 'Library', 'Application Support', 'Oszust Industries', 'Hangman Game')
+    else: ## Linux and Other Unix-like Systems
+        return os.path.join(os.path.expanduser('~'), '.local', 'share', 'Oszust Industries', 'Hangman Game')
+
+appdataPath = get_app_data_path()
+settingsFile = os.path.join(appdataPath, 'settings.json')
+unlockedAchievementsFile = os.path.join(appdataPath, 'unlockedAchievements.json')
+completedWordsFile = os.path.join(appdataPath, 'completedWords.json')
 DLCFolder = resource_path("DLC")
 
 class SettingsWindow(QDialog):

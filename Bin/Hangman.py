@@ -30,6 +30,14 @@ def load_json(filePath, default=None):
         print(f"Error decoding JSON from '{filePath}': {e}")
         return default if default is not None else {}
 
+def get_app_data_path():
+    if sys.platform == 'win32': ## Windows
+        return os.path.join(os.getenv('APPDATA'), 'Oszust Industries', 'Hangman Game')
+    elif sys.platform == 'darwin': ## macOS
+        return os.path.join(os.path.expanduser('~'), 'Library', 'Application Support', 'Oszust Industries', 'Hangman Game')
+    else: ## Linux and Other Unix-like Systems
+        return os.path.join(os.path.expanduser('~'), '.local', 'share', 'Oszust Industries', 'Hangman Game')
+
 class GameWindow(QWidget):
     def __init__(self, switchWindowCallback):
         super().__init__()
@@ -37,7 +45,7 @@ class GameWindow(QWidget):
         self.setWindowTitle("Hangman Game")
 
         ## Setting File Paths
-        self.appdataPath = os.path.join(os.getenv('APPDATA'), 'Oszust Industries', 'Hangman Game')
+        self.appdataPath = get_app_data_path()
         self.settingsFilePath = os.path.join(self.appdataPath, 'settings.json')
         self.unlockedAchievementsPath = os.path.join(self.appdataPath, 'unlockedAchievements.json')
         self.completedWordsPath = os.path.join(self.appdataPath, 'completedWords.json')
@@ -694,6 +702,9 @@ class GameWindow(QWidget):
     def hide_achievement_popup(self):
         self.achievementPopup.hide()
         self.achievementTimer.stop()
+
+        if len(self.unlockedData.get("unlockedAchievements", [])) == (sum(len(achList) for achList in self.achievements.values()) - 1):
+            self.check_and_unlock_achievement("Achievement_100%_Achievement")
 
     def resizeEvent(self, event):
         self.backgroundImage.setGeometry(0, 0, self.width(), self.height())

@@ -4,13 +4,13 @@ from PyQt6.QtGui import QPixmap
 from PyQt6.QtCore import Qt
 import json, os, sys
 
-def resource_path(relative_path):
+def resource_path(relativePath):
     try:
-        base_path = sys._MEIPASS
+        basePath = sys._MEIPASS
     except Exception:
-        base_path = os.path.abspath(".")
+        basePath = os.path.abspath(".")
 
-    return os.path.join(base_path, relative_path)
+    return os.path.join(basePath, relativePath)
 
 def load_json(filePath, default=None):
     try:
@@ -22,24 +22,32 @@ def load_json(filePath, default=None):
         print(f"Error decoding JSON from '{filePath}': {e}")
         return default if default is not None else {}
 
+def get_app_data_path():
+    if sys.platform == 'win32': ## Windows
+        return os.path.join(os.getenv('APPDATA'), 'Oszust Industries', 'Hangman Game')
+    elif sys.platform == 'darwin': ## macOS
+        return os.path.join(os.path.expanduser('~'), 'Library', 'Application Support', 'Oszust Industries', 'Hangman Game')
+    else: ## Linux and Other Unix-like Systems
+        return os.path.join(os.path.expanduser('~'), '.local', 'share', 'Oszust Industries', 'Hangman Game')
+
 class AchievementsWindow(QWidget):
     def __init__(self, switchWindowCallback):
         super().__init__()
         self.switchWindowCallback = switchWindowCallback
         self.setWindowTitle("Achievements")
 
-        # Main Layout
+        ## Main Layout
         mainLayout = QVBoxLayout(self)
 
-        # Load achievements and unlocked data
+        ## Load Achivements and Unlocked Data
         self.achievements = load_json(resource_path(os.path.join("Data", "Achievements.json")))
-        self.unlockedData = load_json(os.path.join(os.getenv('APPDATA'), 'Oszust Industries', 'Hangman Game', 'unlockedAchievements.json'), default={})
+        self.unlockedData = load_json(os.path.join(get_app_data_path(), 'unlockedAchievements.json'), default={})
         
-        # Calculate total and unlocked achievements
+        ## Calculate Total and Unlocked Achievements
         totalAchievements = sum(len(achList) for achList in self.achievements.values())
         unlockedAchievements = len(self.unlockedData.get("unlockedAchievements", []))
         
-        # Progress Bar Layout
+        ## Progress Bar Layout
         progressLayout = QVBoxLayout()
         progressLayout.setAlignment(Qt.AlignmentFlag.AlignCenter)
         
@@ -58,7 +66,7 @@ class AchievementsWindow(QWidget):
         progressLayout.addWidget(self.progressBar)
         mainLayout.addLayout(progressLayout)
 
-        # Scrollable Area for Achievements
+        ## Scrollable Area for Achievements
         scrollArea = QScrollArea()
         scrollArea.setWidgetResizable(True)
         scrollContent = QWidget()
@@ -66,30 +74,30 @@ class AchievementsWindow(QWidget):
         scrollArea.setWidget(scrollContent)
         mainLayout.addWidget(scrollArea)
 
-        # Load achievements and unlocked data
-        self.displayAchievements()
+        ## Display Achievements
+        self.display_achievements()
 
         spacer = QSpacerItem(20, 40)
         self.layout.addItem(spacer)
 
-        # Fixed bottom button container
+        ## Fixed bottom button container
         self.buttonContainer = QWidget()
         self.buttonLayout = QHBoxLayout(self.buttonContainer)
 
-        # Add Close button
+        ## Close button
         self.closeButton = QPushButton("Close")
-        self.closeButton.clicked.connect(self.closeButtonClicked)
+        self.closeButton.clicked.connect(self.close_button_clicked)
         self.buttonLayout.addWidget(self.closeButton)
         mainLayout.addWidget(self.buttonContainer)
 
         self.setLayout(mainLayout)
 
-    def reloadAchievements(self):
-        # Reload JSON data
+    def reload_achievements(self):
+        ## Reload JSON data
         self.achievements = load_json(resource_path(os.path.join("Data", "Achievements.json")))
-        self.unlockedData = load_json(os.path.join(os.getenv('APPDATA'), 'Oszust Industries', 'Hangman Game', 'unlockedAchievements.json'), default={})
+        self.unlockedData = load_json(os.path.join(get_app_data_path(), 'unlockedAchievements.json'), default={})
 
-        # Update progress bar
+        ## Update Progress Bars
         totalAchievements = sum(len(achList) for achList in self.achievements.values())
         unlockedAchievements = len(self.unlockedData.get("unlockedAchievements", []))
 
@@ -98,26 +106,26 @@ class AchievementsWindow(QWidget):
         self.progressBar.setValue(unlockedAchievements)
         self.progressBar.setFormat(f"{unlockedAchievements} / {totalAchievements} Achievements")
 
-        # Clear previous content in scroll area
+        ## Clear previous content in scroll area
         while self.layout.count():
             item = self.layout.takeAt(0)
             widget = item.widget()
             if widget is not None:
                 widget.deleteLater()
 
-        # Re-display achievements
-        self.displayAchievements()
+        ## Re-display achievements
+        self.display_achievements()
 
-        # Spacer (re-added)
+        ## Add Spacer
         spacer = QSpacerItem(20, 40)
         self.layout.addItem(spacer)
 
-    def displayAchievements(self):
+    def display_achievements(self):
         achievementsMeta = self.achievements
         unlocked = self.unlockedData.get("unlockedAchievements", [])
         unlockedProgress = self.unlockedData.get("unlockedAchievementsProgress", {})
 
-        # Group achievements by DLC
+        ## Group Achievements by DLC
         dlcGroups = {}
         for keyName in achievementsMeta.keys():
             achievementList = achievementsMeta[keyName]
@@ -130,7 +138,7 @@ class AchievementsWindow(QWidget):
 
                 dlcGroups[dlcName].append((keyName, achievement))
 
-        # DLC Groups
+        ## DLC Groups
         for dlcName, achievements in dlcGroups.items():
             if dlcName == "Base": 
                 dlcHeader = QLabel(f"Hangman:")
@@ -139,7 +147,7 @@ class AchievementsWindow(QWidget):
             dlcHeader.setStyleSheet("font-weight: bold; color: white; font-size: 16px; margin-top: 20px;")
             self.layout.addWidget(dlcHeader)
 
-            # Add Achievements
+            ## Add Achievements
             for keyName, achievement in achievements:
                 isUnlocked = keyName in unlocked
                 progressGoal = achievement.get("AchievementProgressTracker")
@@ -148,13 +156,13 @@ class AchievementsWindow(QWidget):
                     progressGoal = sum(len(achList) for achList in self.achievements.values())
                     progressValue = len(self.unlockedData.get("unlockedAchievements", []))
 
-                # Achievement Box
+                ## Achievement Box
                 achievementBox = QFrame()
                 achievementBox.setStyleSheet("background-color: #2A2A2E; border-radius: 8px; padding: 8px;")
                 achievementLayout = QHBoxLayout(achievementBox)
                 achievementLayout.setSpacing(10)
 
-                # Load Achievement Image
+                ## Load Achievement Image
                 if isUnlocked:
                     imageFilename = resource_path(os.path.join("Achievement Icons", f"{keyName}.png"))
                 else:
@@ -174,7 +182,7 @@ class AchievementsWindow(QWidget):
                 textLayout.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter)
                 textLayout.setSpacing(2)
 
-                # Achievement Title
+                ## Achievement Title
                 if achievement.get("Hidden", False) and not isUnlocked:
                     titleLabel = QLabel("Hidden Achievement")
                     titleLabel.setStyleSheet("font-weight: bold; color: white; font-size: 32px;" if isUnlocked else "color: gray;")
@@ -186,7 +194,7 @@ class AchievementsWindow(QWidget):
                     titleLabel.setStyleSheet("font-weight: bold; color: white; font-size: 32px;" if isUnlocked else "color: gray;")
                 textLayout.addWidget(titleLabel)
 
-                # Achievement Description
+                ## Achievement Description
                 if achievement.get("Hidden", False) and not isUnlocked:
                     descriptionLabel = QLabel("???")
                     descriptionLabel.setStyleSheet("color: lightgray; font-size: 12px;")
@@ -197,11 +205,11 @@ class AchievementsWindow(QWidget):
 
                 achievementLayout.addLayout(textLayout, 1)
 
-                # Progress Bar / Unlock Time
+                ## Progress Bar / Unlock Time
                 progressLayout = QHBoxLayout()
                 progressLayout.setAlignment(Qt.AlignmentFlag.AlignRight)
 
-                if isUnlocked:  # Unlock Time
+                if isUnlocked:  ## Unlock Time
                     unlock_time_str = self.unlockedData.get("unlockTimes", {}).get(keyName, None)
     
                     if unlock_time_str:
@@ -228,7 +236,7 @@ class AchievementsWindow(QWidget):
                     unlockLabel = QLabel(f"Unlocked: {formattedTime}")
                     unlockLabel.setStyleSheet("color: lightgray; font-size: 12px;")
                     progressLayout.addWidget(unlockLabel)
-                else:  # Progress Bar
+                else:  ## Progress Bar
                     if progressGoal:
                         progressBar = QProgressBar()
                         progressBar.setMinimum(0)
@@ -249,5 +257,5 @@ class AchievementsWindow(QWidget):
 
                 self.layout.addWidget(achievementBox)
 
-    def closeButtonClicked(self):
+    def close_button_clicked(self):
         self.switchWindowCallback("MainMenuWindow")

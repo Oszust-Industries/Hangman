@@ -1,5 +1,5 @@
 ## Hangman Game - Oszust Industries
-## Created on: 2-11-25 - Last update: 8-18-25
+## Created on: 2-11-25 - Last update: 8-19-25
 softwareVersion = "v1.0.0"
 systemName, systemBuild = "Hangman", "dev"
 
@@ -16,21 +16,28 @@ def resource_path(relativePath):
 
     return os.path.join(basePath, relativePath)
 
+def get_app_data_path():
+    if sys.platform == 'win32': ## Windows
+        return os.path.join(os.getenv('APPDATA'), 'Oszust Industries', 'Hangman Game')
+    elif sys.platform == 'darwin': ## macOS
+        return os.path.join(os.path.expanduser('~'), 'Library', 'Application Support', 'Oszust Industries', 'Hangman Game')
+    else: ## Linux and Other Unix-like Systems
+        return os.path.join(os.path.expanduser('~'), '.local', 'share', 'Oszust Industries', 'Hangman Game')
+
 class GameSetup:
     def file_setup():
-        basePath = os.path.join(os.getenv('APPDATA'), 'Oszust Industries')
-        hangmanPath = os.path.join(basePath, 'Hangman Game')
+        appdataPath = get_app_data_path()
         ## Create Appdata Folders
-        os.makedirs(hangmanPath, exist_ok=True)
+        os.makedirs(appdataPath, exist_ok=True)
         ## Create Achievement Save
-        if os.path.exists(os.path.join(os.getenv('APPDATA'), 'Oszust Industries', 'Hangman Game', 'unlockedAchievements.json')) == False:
+        if os.path.exists(os.path.join(appdataPath, 'unlockedAchievements.json')) == False:
             defaultData = {"unlockedAchievements": [], "unlockedAchievementsProgress": {}, "unlockTimes": {}}
-            with open(os.path.join(os.getenv('APPDATA'), 'Oszust Industries', 'Hangman Game', 'unlockedAchievements.json'), 'w') as json_file:
+            with open(os.path.join(appdataPath, 'unlockedAchievements.json'), 'w') as json_file:
                 json.dump(defaultData, json_file, indent=4)
         ## Create Completed Words
-        if os.path.exists(os.path.join(os.getenv('APPDATA'), 'Oszust Industries', 'Hangman Game', 'completedWords.json')) == False:
+        if os.path.exists(os.path.join(appdataPath, 'completedWords.json')) == False:
             defaultData = {"unique_words": [], "unique_words_correct": []}
-            with open(os.path.join(os.getenv('APPDATA'), 'Oszust Industries', 'Hangman Game', 'completedWords.json'), 'w') as json_file:
+            with open(os.path.join(appdataPath, 'completedWords.json'), 'w') as json_file:
                 json.dump(defaultData, json_file, indent=4)
 
 class MainApp(QStackedWidget):
@@ -66,7 +73,7 @@ class MainApp(QStackedWidget):
             if windowName == "GameWindow" and restart:
                 self.GameWindow.restart_game()
             elif windowName == "AchievementsWindow" and restart:
-                self.AchievementsWindow.reloadAchievements()
+                self.AchievementsWindow.reload_achievements()
             self.setCurrentWidget(windows[windowName])
 
 if __name__ == "__main__":

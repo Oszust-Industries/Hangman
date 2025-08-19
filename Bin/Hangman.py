@@ -703,7 +703,7 @@ class GameWindow(QWidget):
         self.achievementPopup.hide()
         self.achievementTimer.stop()
 
-        if len(self.unlockedData.get("unlockedAchievements", [])) == (sum(len(achList) for achList in self.achievements.values()) - 1):
+        if len(self.unlockedData.get("unlockedAchievements", [])) == (sum(len(achList) for achList in self.allAchievements.values()) - 1):
             self.check_and_unlock_achievement("Achievement_100%_Achievement")
 
     def resizeEvent(self, event):

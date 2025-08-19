@@ -4,7 +4,7 @@
             "Name": "Hangman Master",
             "Description": "PlatinumTrophy",
             "Level": "Platinum",
-            "AchievementProgressTracker": null,
+            "AchievementProgressTracker": 1,
             "DLC": "Base",
             "Hidden": false
         }

@@ -1,7 +1,6 @@
 {
   "Hockey Teams": {
     "Ducks": "Anaheim",
-    "Coyotes": "Arizona",
     "Bruins": "Boston",
     "Sabres": "Buffalo",
     "Flames": "Calgary",
@@ -31,6 +30,7 @@
     "Golden Knights": "Vegas",
     "Capitals": "Washington",
     "Jets": "Winnipeg",
-    "Kraken": "Seattle"
+    "Kraken": "Seattle",
+    "Mammoth": "Utah"
   }
 }

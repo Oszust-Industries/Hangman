@@ -44,7 +44,7 @@ class GameWindow(QWidget):
 
         ## Load Settings, Achievements, and Completed Words
         self.settings = load_json(self.settingsFilePath, self.get_default_settings())
-        defaultUnlockedData = {"unlockedAchievements": [], "unlockedAchievementsProgress": {}, "unlockTimes": {}, "win_count": 0, "unique_words_guessed": []}
+        defaultUnlockedData = {"unlockedAchievements": [], "unlockedAchievementsProgress": {}, "unlockTimes": {}}
         self.unlockedData = load_json(self.unlockedAchievementsPath, defaultUnlockedData)
         self.completedWords = load_json(self.completedWordsPath, {})
 
@@ -175,9 +175,7 @@ class GameWindow(QWidget):
         defaultUnlockedData = {
             "unlockedAchievements": [],
             "unlockedAchievementsProgress": {},
-            "unlockTimes": {},
-            "win_count": 0,
-            "unique_words_guessed": []
+            "unlockTimes": {}
         }
         # Reload Achievements Data
         self.unlockedData = load_json(self.unlockedAchievementsPath, defaultUnlockedData)
@@ -388,9 +386,6 @@ class GameWindow(QWidget):
             if fullWordGuessingMode == "Off":
                 self.incorrectGuessesInRound += 1
                 return
-            elif not guess.isalpha(): ## Check for Real Letters
-                self.check_and_unlock_achievement("Achievement_Alphabet")
-                return
             if guess == self.secretWord:
                 self.check_and_unlock_achievement("Achievement_Solve_Correct")
                 if len(self.guessedLetters) == 0:
@@ -490,13 +485,16 @@ class GameWindow(QWidget):
 
     def open_menu(self):
         self.check_and_unlock_achievement("Achievement_Stop_Playing")
-        if len(self.guessedLetters) > 0:
+        if len(self.guessedLetters) > self.minGuesses:
             self.check_and_unlock_achievement("Achievement_Terminate")
         self.switch_window("MainMenuWindow")
 
     def end_game(self, win):
-        totalCompletedWords = self.unlockedData["unlockedAchievementsProgress"].get("Achievement_All_Topics", 0)
-        self.unlockedData["unlockedAchievementsProgress"]["Achievement_All_Topics"] = (totalCompletedWords + 1)
+        if self.secretWordDisplay not in self.completedWords.get("unique_words", []):
+            self.completedWords["unique_words"].append(self.secretWordDisplay)
+        totalWords = self.unlockedData["unlockedAchievementsProgress"].get("Achievement_All_Topics", 0)
+        if totalWords < len(self.completedWords["unique_words"]):
+            self.unlockedData["unlockedAchievementsProgress"]["Achievement_All_Topics"] = len(self.completedWords["unique_words"])
 
         ## Win Game
         if win:
@@ -509,19 +507,26 @@ class GameWindow(QWidget):
                 self.check_and_unlock_achievement("Achievement_Hard_Mode")
 
             ## Update Win Count and Unique Words Guessed
-            if "unique_words_guessed" not in self.unlockedData:
-                self.unlockedData["unique_words_guessed"] = []
+            if "unique_words_correct" not in self.completedWords:
+                self.completedWords["unique_words_correct"] = []
 
-            self.unlockedData["win_count"] = self.unlockedData.get("win_count", 0) + 1
-            if self.secretWord not in self.unlockedData.get("unique_words_guessed", []):
-                self.unlockedData["unique_words_guessed"].append(self.secretWord)
+            if self.secretWordDisplay not in self.completedWords.get("unique_words_correct", []):
+                self.completedWords["unique_words_correct"].append(self.secretWordDisplay)
+
+            hotStreak = self.unlockedData["unlockedAchievementsProgress"].get("Achievement_Hot_Streak", 0)
+            self.unlockedData["unlockedAchievementsProgress"]["Achievement_Hot_Streak"] = (hotStreak + 1)
+            self.unlockedData["unlockedAchievementsProgress"]["Achievement_Cold_Streak"] = 0
+
+            totalCorrectWords = self.unlockedData["unlockedAchievementsProgress"].get("Achievement_All_Correct", 0)
+            if totalCorrectWords < len(self.completedWords["unique_words_correct"]):
+                self.unlockedData["unlockedAchievementsProgress"]["Achievement_All_Correct"] = len(self.completedWords["unique_words_correct"])
 
             ## Add Word to Completed Words
             completedInCategory = self.completedWords.get(self.currentDLCTheme, [])
-            if self.secretWord not in completedInCategory:
+            if self.secretWordDisplay not in completedInCategory:
                 if self.currentDLCTheme not in self.completedWords:
                     self.completedWords[self.currentDLCTheme] = []
-                self.completedWords[self.currentDLCTheme].append(self.secretWord)
+                self.completedWords[self.currentDLCTheme].append(self.secretWordDisplay)
                 save_json(self.completedWordsPath, self.completedWords)
 
                 ## Get the New Completed Count for the Current Category
@@ -558,7 +563,13 @@ class GameWindow(QWidget):
                 ## Update Progress if Higher
                 if newCompletedCount > currentProgress:
                     self.unlockedData["unlockedAchievementsProgress"][achievementThemeName] = newCompletedCount
-                    
+
+        ## Lost Game
+        else:
+            coldStreak = self.unlockedData["unlockedAchievementsProgress"].get("Achievement_Cold_Streak", 0)
+            self.unlockedData["unlockedAchievementsProgress"]["Achievement_Cold_Streak"] = (coldStreak + 1)
+            self.unlockedData["unlockedAchievementsProgress"]["Achievement_Hot_Streak"] = 0
+
         ## Save and Check Achievements
         self.check_and_unlock_achievement()
         save_json(self.unlockedAchievementsPath, self.unlockedData)
@@ -576,6 +587,7 @@ class GameWindow(QWidget):
         self.incorrectGuessesInRound = 0
         self.guessedLetters = set()
         self.remainingAttempts = self.settings.get("strikes_limit", 6)
+        self.minGuesses = 0
 
         ## Load Words from Enabled Categories
         self.wordDataDict, self.currentDLCTheme, self.currentDLCDescription = self.load_words()
@@ -595,8 +607,19 @@ class GameWindow(QWidget):
         for char in self.secretWord:
             if char == ' ':
                 self.guessedLetters.add(' ')
-            if char == ',':
+                self.minGuesses += 1
+            elif char == ',':
                 self.guessedLetters.add(',')
+                self.minGuesses += 1
+            elif char == '.':
+                self.guessedLetters.add('.')
+                self.minGuesses += 1
+            elif char == '-':
+                self.guessedLetters.add('-')
+                self.minGuesses += 1
+            elif char == "'":
+                self.guessedLetters.add("'")
+                self.minGuesses += 1
 
         self.wordLabel.setText(self.display_word())
         self.update_status_label()

@@ -24,8 +24,13 @@ class GameSetup:
         os.makedirs(hangmanPath, exist_ok=True)
         ## Create Achievement Save
         if os.path.exists(os.path.join(os.getenv('APPDATA'), 'Oszust Industries', 'Hangman Game', 'unlockedAchievements.json')) == False:
-            defaultData = {"unlockedAchievements": [], "unlockedAchievementsProgress": {}, "unlockTimes": {}, "win_count": 0, "unique_words_guessed": []}
+            defaultData = {"unlockedAchievements": [], "unlockedAchievementsProgress": {}, "unlockTimes": {}}
             with open(os.path.join(os.getenv('APPDATA'), 'Oszust Industries', 'Hangman Game', 'unlockedAchievements.json'), 'w') as json_file:
+                json.dump(defaultData, json_file, indent=4)
+        ## Create Completed Words
+        if os.path.exists(os.path.join(os.getenv('APPDATA'), 'Oszust Industries', 'Hangman Game', 'completedWords.json')) == False:
+            defaultData = {"unique_words": [], "unique_words_correct": []}
+            with open(os.path.join(os.getenv('APPDATA'), 'Oszust Industries', 'Hangman Game', 'completedWords.json'), 'w') as json_file:
                 json.dump(defaultData, json_file, indent=4)
 
 class MainApp(QStackedWidget):

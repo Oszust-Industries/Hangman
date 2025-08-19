@@ -1,8 +1,8 @@
-import json, os, sys
 from PyQt6.QtWidgets import QVBoxLayout, QHBoxLayout, QLabel, QWidget, QScrollArea, QFrame, QProgressBar, QPushButton, QSpacerItem
+from datetime import datetime, timedelta
 from PyQt6.QtGui import QPixmap
 from PyQt6.QtCore import Qt
-from datetime import datetime, timedelta
+import json, os, sys
 
 def resource_path(relative_path):
     try:
@@ -144,6 +144,9 @@ class AchievementsWindow(QWidget):
                 isUnlocked = keyName in unlocked
                 progressGoal = achievement.get("AchievementProgressTracker")
                 progressValue = unlockedProgress.get(keyName, 0)
+                if keyName == "Achievement_100%_Achievement":
+                    progressGoal = sum(len(achList) for achList in self.achievements.values())
+                    progressValue = len(self.unlockedData.get("unlockedAchievements", []))
 
                 # Achievement Box
                 achievementBox = QFrame()

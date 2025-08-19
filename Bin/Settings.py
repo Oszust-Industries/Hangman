@@ -197,7 +197,7 @@ class SettingsWindow(QDialog):
                                      QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
         if reply == QMessageBox.StandardButton.Yes:
             ## Reset Achievement Data
-            default_unlocked_data = {"unlockedAchievements": [], "unlockedAchievementsProgress": {}, "unlockTimes": {}, "win_count": 0, "unique_words_guessed": []}
+            default_unlocked_data = {"unlockedAchievements": [], "unlockedAchievementsProgress": {}, "unlockTimes": {}}
             try:
                 ## Ensure Directory Exists
                 os.makedirs(os.path.dirname(unlockedAchievementsFile), exist_ok=True)
@@ -218,7 +218,7 @@ class SettingsWindow(QDialog):
                 ## Clear Completed Words
                 os.makedirs(os.path.dirname(completedWordsFile), exist_ok=True)
                 with open(completedWordsFile, 'w', encoding='utf-8') as f:
-                    json.dump({"completedWords": []}, f, indent=4)
+                    json.dump({"unique_words": [], "unique_words_correct": []}, f, indent=4)
                 QMessageBox.information(self, "Game History Reset", "Your game history (completed words) has been reset.")
                 print("Game History (Completed Words) Reset Successfully.")
             except Exception as e:

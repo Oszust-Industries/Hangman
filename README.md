@@ -2,7 +2,7 @@
 
 Enjoy hundreds of Hangman rounds with a variety of unique categories! Test your skills across different difficulty levels, unlock achievements, and use optional hints when you need a helping hand. Can you guess the word before you run out of chances?
 
-Release Date: Not Released
+Release Date: August 26, 2025
 
 Developer: [Oszust Industries](https://github.com/Oszust-Industries)
 <br /> [![Twitter URL](https://img.shields.io/twitter/url/https/twitter.com/bukotsunikki.svg?style=social&label=Follow%20%40OszustOS)](https://twitter.com/OszustOS)
@@ -15,7 +15,7 @@ Languages: English
 
 #### Supported Devices:
 
-* **Storage**: 500 MB
+* **Storage**: 100 MB
 * **Operating Systems**: Windows 10 & 11
 
 ## Additional Information:
@@ -90,20 +90,20 @@ This category introduces thirty new rounds. Each round is one of the NBA teams.
 <br />
 <br />
 ### NFL Football Teams
-Release Date: TBA
+Release Date: August 26, 2025
 
 This category introduces thirty-two new rounds. Each round is one of the NFL teams.
 <br />
 <br />
 <br />
 ### Transportation
-Release Date: TBA
+Release Date: August 26, 2025
 
 This category introduces twenty-eight new rounds. Each round features a mode of transportation.
 <br />
 <br />
 <br />
 ### Hangman: Holidays category
-Release Date: TBA
+Release Date: August 26, 2025
 
 This category introduces twenty-eight new rounds. Each round features a well-known holiday.

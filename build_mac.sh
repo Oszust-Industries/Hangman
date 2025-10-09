@@ -2,6 +2,7 @@
 python3 -m PyInstaller Bin/Main.py \
     --noconsole \
     --noconfirm \
+    --icon="Data/exeIcon.ico" \
     --hidden-import=PyQt6 \
     --hidden-import=PyQt6.QtCore \
     --hidden-import=PyQt6.QtGui \

@@ -16,7 +16,7 @@ Languages: English
 #### Supported Devices:
 
 * **Storage**: 100 MB
-* **Operating Systems**: Windows 10 & 11
+* **Operating Systems**: Windows & MacOS
 
 ## Additional Information:
 
